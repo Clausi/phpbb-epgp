@@ -1,0 +1,34 @@
+imports:
+    - { resource: tables.yml }
+
+services:
+    clausi.epgp.main.controller:
+        class: clausi\epgp\controller\main_controller
+        arguments:
+            - @config
+            - @auth
+            - @controller.helper
+            - @dbal.conn
+            - @template
+            - @user
+            - @request
+            - @service_container
+    clausi.epgp.listener:
+        class: clausi\epgp\event\main_listener
+        arguments:
+            - @controller.helper
+            - @template
+            - @config
+            - @auth
+        tags:
+            - { name: event.listener }
+    clausi.epgp.admin.controller:
+        class: clausi\epgp\controller\admin_controller
+        arguments:
+            - @config
+            - @dbal.conn
+            - @request
+            - @template
+            - @user
+            - @auth
+            - @service_container
