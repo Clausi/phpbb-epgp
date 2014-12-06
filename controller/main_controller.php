@@ -79,4 +79,36 @@ class main_controller implements main_interface
 		return $this->helper->render('epgp_user.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
+	
+	public function getGuild($name, $realm, $region)
+	{
+		$sql_ary = array(
+			'name' => $name,
+			'region' => $region,
+			'realm' => $realm,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_guilds') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row[0];
+		
+		return false;
+	}
+	
+	
+	private function var_display($var)
+	{
+		$error = "<pre>";
+		print_r($var);
+		$error = "</pre>";
+	}
+	
 }

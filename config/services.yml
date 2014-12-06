@@ -32,3 +32,4 @@ services:
             - @user
             - @auth
             - @service_container
+            - @clausi.epgp.main.controller

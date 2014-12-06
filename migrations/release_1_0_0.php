@@ -98,7 +98,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'realm' => array('VCHAR:50', NULL),
 						'min_ep' => array('UINT', 0),
 						'base_gp' => array('UINT', 0),
-						'decay' => array('TINT:4', 0),
+						'decay_p' => array('TINT:4', 0),
 						'extras_p' => array('TINT:4', 0),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),

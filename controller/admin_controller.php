@@ -18,10 +18,12 @@ class admin_controller implements admin_interface
 	protected $user;
 	/** @var ContainerInterface */
 	protected $container;
-	/** @var \phpbb\boardrules\operators\rule */
-	protected $rule_operator;
 	/** string Custom form action */
 	protected $auth;
+	
+	protected $epgp;
+	
+	protected $guild;
 
 	/**
 	* Constructor
@@ -31,7 +33,7 @@ class admin_controller implements admin_interface
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\auth\auth $auth, ContainerInterface $container)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\auth\auth $auth, ContainerInterface $container, \clausi\epgp\controller\main_controller $epgp)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -40,6 +42,7 @@ class admin_controller implements admin_interface
 		$this->user = $user;
 		$this->auth = $auth;
 		$this->container = $container;
+		$this->epgp = $epgp;
 	}
 	
 	public function display_options()
@@ -75,41 +78,47 @@ class admin_controller implements admin_interface
 				trigger_error('FORM_INVALID');
 			}
 			
-			$epgp_log = $this->request->variable('epgp_log', '', true);
-			if($epgp_log == '') trigger_error($this->user->lang('ACP_EPGP_UPLOAD_ERROR') . adm_back_link($this->u_action));
-			// $epgp_log = '{"guild":"Tenebrae","region":"EU","min_ep":3000,"base_gp":1000,"timestamp":1417853100,"extras_p":100,"realm":"Anetheron"}';
-			$this->var_display($epgp_log);
+			$log = htmlspecialchars_decode($this->request->variable('epgp_log', '', true));
+			if($log == '') trigger_error($this->user->lang('ACP_EPGP_UPLOAD_ERROR') . adm_back_link($this->u_action));
 
-			$test = json_decode($epgp_log);
-			switch (json_last_error()) {
-				case JSON_ERROR_NONE:
-					echo ' - No errors';
-				break;
-				case JSON_ERROR_DEPTH:
-					echo ' - Maximum stack depth exceeded';
-				break;
-				case JSON_ERROR_STATE_MISMATCH:
-					echo ' - Underflow or the modes mismatch';
-				break;
-				case JSON_ERROR_CTRL_CHAR:
-					echo ' - Unexpected control character found';
-				break;
-				case JSON_ERROR_SYNTAX:
-					echo ' - Syntax error, malformed JSON';
-				break;
-				case JSON_ERROR_UTF8:
-					echo ' - Malformed UTF-8 characters, possibly incorrectly encoded';
-				break;
-				default:
-					echo ' - Unknown error';
-				break;
+			$log = json_decode($log);
+
+			if( ! $log || $log == NULL ) 
+			{
+				switch (json_last_error()) {
+					case JSON_ERROR_NONE:
+						$error = ' - No errors';
+					break;
+					case JSON_ERROR_DEPTH:
+						$error = ' - Maximum stack depth exceeded';
+					break;
+					case JSON_ERROR_STATE_MISMATCH:
+						$error = ' - Underflow or the modes mismatch';
+					break;
+					case JSON_ERROR_CTRL_CHAR:
+						$error = ' - Unexpected control character found';
+					break;
+					case JSON_ERROR_SYNTAX:
+						$error = ' - Syntax error, malformed JSON';
+					break;
+					case JSON_ERROR_UTF8:
+						$error = ' - Malformed UTF-8 characters, possibly incorrectly encoded';
+					break;
+					default:
+						$error = ' - Unknown error';
+					break;
+				}
+				trigger_error($this->user->lang('ACP_EPGP_UPLOAD_JSONERROR') . $error . adm_back_link($this->u_action));
 			}
-				 
-			// if(! $test || $test == NULL) trigger_error($this->user->lang('ACP_EPGP_UPLOAD_JSONERROR') . adm_back_link($this->u_action));
-			
-			$this->var_display($test);
-			
+						
 			$epgp_note = $this->request->variable('epgp_note', '', true);
+			
+			$this->guild = $this->epgp->getGuild($log->guild, $log->realm, $log->region);
+
+			if($this->guild === false) $this->createGuild($log->guild, $log->realm, $log->region, $log->min_ep, $log->base_gp, $log->extras_p, $log->decay_p);
+			else $this->updateGuild($log->guild, $log->realm, $log->region, $log->min_ep, $log->base_gp, $log->extras_p, $log->decay_p);
+			
+			$this->var_display($this->guild);
 
 			trigger_error($this->user->lang('ACP_EPGP_UPLOAD_SAVED') . adm_back_link($this->u_action));
 		}
@@ -132,6 +141,44 @@ class admin_controller implements admin_interface
 	{
 		$this->config->set('clausi_epgp_active', $this->request->variable('clausi_epgp_active', 0));
 	}
+	
+	
+	private function createGuild($name, $realm, $region, $min_ep, $base_gp, $extras_p, $decay_p)
+	{
+		$sql_ary = array(
+			'name' => $name,
+			'realm' => $realm,
+			'region' => $region,
+			'min_ep' => $min_ep,
+			'base_gp' => $base_gp,
+			'extras_p' => $extras_p,
+			'decay_p' => $decay_p,
+			'created' => time(),
+			'modified' => time()
+		);
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_guilds') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+		
+		$this->guild = $this->epgp->getGuild($name, $realm, $region);
+	}
+	
+	
+	private function updateGuild($name, $realm, $region, $min_ep, $base_gp, $extras_p, $decay_p)
+	{
+		$sql_ary = array(
+			'min_ep' => $min_ep,
+			'base_gp' => $base_gp,
+			'extras_p' => $extras_p,
+			'decay_p' => $decay_p,
+			'modified' => time()
+		);
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_guilds') . ' SET 
+			' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE guild_id = ' . $this->guild['guild_id'];
+		$this->db->sql_query($sql);
+		
+		$this->guild = $this->epgp->getGuild($name, $realm, $region);
+	}
 
 	
 	public function set_page_url($u_action)
@@ -142,9 +189,9 @@ class admin_controller implements admin_interface
 	
 	private function var_display($var)
 	{
-		echo "<pre>";
+		$error = "<pre>";
 		print_r($var);
-		echo "</pre>";
+		$error = "</pre>";
 	}
 	
 }

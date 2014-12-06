@@ -13,7 +13,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ACP_EPGP_ACTIVE' => 'EPGP active?',
 	'ACP_EPGP_SETTING_SAVED' => 'Settings saved',
-	'ACP_EPGP_UPLOAD_SAVED' => 'EPGP uploaded',
+	'ACP_EPGP_UPLOAD_SAVED' => 'EPGP log uploaded',
 	'ACP_EPGP_UPLOAD_ERROR' => 'EPGP log empty',
 	'ACP_EPGP_UPLOAD_JSONERROR' => 'EPGP Log is not valid',
 	
