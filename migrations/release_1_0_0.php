@@ -24,7 +24,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				'ACP_EPGP_TITLE',
 				array(
 					'module_basename' => '\clausi\epgp\acp\main_module',
-					'modes' => array('settings', 'upload'),
+					'modes' => array('settings', 'upload', 'snapshots'),
 				),
 			)),
 			
@@ -44,12 +44,26 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
+			
+				$this->table_prefix . 'epgp_snapshots' => array(
+					'COLUMNS' => array(
+						'snap_id' => array('UINT', NULL, 'auto_increment'),
+						'guild_id' => array('UINT', NULL),
+						'snapshot_time' => array('TIMESTAMP', 0),
+						'log' => array('MTEXT', NULL),
+						'note' => array('TEXT', NULL),
+						'created' => array('TIMESTAMP', 0),
+						'modified' => array('TIMESTAMP', 0),
+						'deleted' => array('TIMESTAMP', 0),
+					),
+					'PRIMARY_KEY'	=> 'snap_id',
+				),
 				
 				$this->table_prefix . 'epgp_standings' => array(
 					'COLUMNS' => array(
 						'epgp_id' => array('UINT', NULL, 'auto_increment'),
 						'guild_id' => array('UINT', NULL),
-						'raid_id' => array('UINT', NULL),
+						'snap_id' => array('UINT', NULL),
 						'uniquekey' => array('VCHAR:50', NULL),
 						'name' => array('VCHAR:50', NULL),
 						'realm' => array('VCHAR:50', NULL),
@@ -57,6 +71,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'gp' => array('INT:7', 0),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
+						'deleted' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> 'epgp_id',
 				),
@@ -65,11 +80,12 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 					'COLUMNS' => array(
 						'item_id' => array('UINT', NULL, 'auto_increment'),
 						'game_id' => array('INT:10', NULL),
-						'raid_id' => array('UINT', NULL),
+						'snap_id' => array('UINT', NULL),
 						'uniquekey' => array('VCHAR:50', NULL),
 						'name' => array('VCHAR:50', NULL),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
+						'deleted' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> 'item_id',
 				),
@@ -86,6 +102,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'extras_p' => array('TINT:4', 0),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
+						'deleted' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> 'guild_id',
 				),
@@ -100,6 +117,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'drop_tables' => array(
+				$this->table_prefix . 'epgp_snapshots',
 				$this->table_prefix . 'epgp_standings',
 				$this->table_prefix . 'epgp_guilds',
 				$this->table_prefix . 'epgp_items',

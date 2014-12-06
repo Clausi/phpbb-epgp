@@ -1,0 +1,1 @@
+{"guild":"Tenebrae","region":"EU","min_ep":3000,"base_gp":1000,"timestamp":1417853100,"extras_p":100,"realm":"Anetheron"}

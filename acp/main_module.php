@@ -28,6 +28,12 @@ class main_module
 				$this->page_title = $user->lang('ACP_EPGP_UPLOAD');
 				$admin_controller->display_upload();
 			break;
+			
+			case 'snapshots':
+				$this->tpl_name = 'epgp_snapshots';
+				$this->page_title = $user->lang('ACP_EPGP_SNAPSHOTS');
+				$admin_controller->display_snapshots();
+			break;
 		}
 	}
 }

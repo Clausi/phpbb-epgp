@@ -21,6 +21,11 @@ class main_info
 					'auth' => 'ext_clausi/epgp && acl_a_epgp', 
 					'cat' => array('ACP_EPGP_UPLOAD')
 				),
+				'snapshots' => array(
+					'title' => 'ACP_EPGP_SNAPSHOTS', 
+					'auth' => 'ext_clausi/epgp && acl_a_epgp', 
+					'cat' => array('ACP_EPGP_SNAPSHOTS')
+				),
 			),
 		);
 	}

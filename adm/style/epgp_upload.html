@@ -2,12 +2,19 @@
 
 <h1>{L_SETTINGS}</h1>
 
-<form id="acp_board" method="post" action="{U_ACTION}">
+<form id="acp_epgp_upload" method="post" action="{U_ACTION}">
 	<fieldset>
 		<dl>
-			<dt><label for="clausi_epgp_active">{L_ACP_EPGP_ACTIVE}</label></dt>
+			<dt><label for="epgp_log">{L_ACP_EPGP_LOG}</label></dt>
 			<dd>
-				sdafasd
+				<textarea name="epgp_log" rows="8" cols="50" placeholder="{L_LOG_TEXT}" required></textarea> 
+			</dd>
+		</dl>
+		
+		<dl>
+			<dt><label for="epgp_note">{L_ACP_EPGP_NOTE}</label></dt>
+			<dd>
+				<textarea name="epgp_note" rows="2" cols="50" placeholder="{L_NOTE_TEXT}"></textarea> 
 			</dd>
 		</dl>
 		

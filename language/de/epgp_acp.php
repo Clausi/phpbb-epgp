@@ -14,4 +14,11 @@ $lang = array_merge($lang, array(
 	'ACP_EPGP_ACTIVE' => 'EPGP active?',
 	'ACP_EPGP_SETTING_SAVED' => 'Settings saved',
 	'ACP_EPGP_UPLOAD_SAVED' => 'EPGP uploaded',
+	'ACP_EPGP_UPLOAD_ERROR' => 'EPGP log empty',
+	
+	'LOG_TEXT' => 'Insert EPGP export here',
+	'ACP_EPGP_LOG' => 'EPGP snapshot',
+	
+	'ACP_EPGP_NOTE' => 'Optional snapshot note',
+	'NOTE_TEXT' => 'Add a optional note for this snapshot',
 ));
