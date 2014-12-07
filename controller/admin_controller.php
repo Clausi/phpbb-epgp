@@ -110,15 +110,14 @@ class admin_controller implements admin_interface
 				}
 				trigger_error($this->user->lang('ACP_EPGP_UPLOAD_JSONERROR') . $error . adm_back_link($this->u_action));
 			}
-						
-			$epgp_note = $this->request->variable('epgp_note', '', true);
 			
 			$this->guild = $this->epgp->getGuild($log->guild, $log->realm, $log->region);
 
 			if($this->guild === false) $this->createGuild($log->guild, $log->realm, $log->region, $log->min_ep, $log->base_gp, $log->extras_p, $log->decay_p);
 			else $this->updateGuild($log->guild, $log->realm, $log->region, $log->min_ep, $log->base_gp, $log->extras_p, $log->decay_p);
 			
-			$this->var_display($this->guild);
+			$epgp_note = $this->request->variable('epgp_note', '', true);
+			$this->setSnapshotNote($epgp_note);
 
 			trigger_error($this->user->lang('ACP_EPGP_UPLOAD_SAVED') . adm_back_link($this->u_action));
 		}
@@ -141,7 +140,7 @@ class admin_controller implements admin_interface
 	{
 		$this->config->set('clausi_epgp_active', $this->request->variable('clausi_epgp_active', 0));
 	}
-	
+
 	
 	private function createGuild($name, $realm, $region, $min_ep, $base_gp, $extras_p, $decay_p)
 	{
@@ -178,6 +177,12 @@ class admin_controller implements admin_interface
 		$this->db->sql_query($sql);
 		
 		$this->guild = $this->epgp->getGuild($name, $realm, $region);
+	}
+	
+	
+	private function setSnapshotNote($note)
+	{
+		
 	}
 
 	

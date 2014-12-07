@@ -31,11 +31,11 @@ class main_controller implements main_interface
 	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
 	{
 		$this->config = $config;
-		$this->auth = $auth;
-		$this->helper = $helper;
-		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
+		$this->helper = $helper;
+		$this->auth = $auth;
+		$this->db = $db;
 		$this->request = $request;
 		$this->container = $container;
 	}
@@ -43,40 +43,37 @@ class main_controller implements main_interface
 	
 	public function index()
 	{
-		if($this->config['clausi_epgp_active'] == 0) 
-		{
-			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INACTIVE']);
-			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
-		}
 		$this->u_action = $this->helper->route('clausi_epgp_controller');
 		
 		return $this->helper->render('epgp_index.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
 	
-	public function raid($id)
+	public function snapshot($snap_id)
 	{
-		if($this->config['clausi_epgp_active'] == 0) 
+		if( ! is_numeric($snap_id) || $snap_id <= 0 )
 		{
-			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INACTIVE']);
+			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INVALID_SNAPSHOT']);
 			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
 		}
-		$this->u_action = $this->helper->route('clausi_epgp_controller');
 		
-		return $this->helper->render('epgp_raid.html', $this->user->lang['EPGP_PAGE']);
+		$this->u_action = $this->helper->route('clausi_epgp_controller_snapshot');
+		
+		return $this->helper->render('epgp_snapshot.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
 	
-	public function user($id)
+	public function character($char_id)
 	{
-		if($this->config['clausi_epgp_active'] == 0) 
+		if( ! is_numeric($char_id) || $char_id <= 0 )
 		{
-			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INACTIVE']);
+			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INVALID_CHARACTER']);
 			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
 		}
-		$this->u_action = $this->helper->route('clausi_epgp_controller');
 		
-		return $this->helper->render('epgp_user.html', $this->user->lang['EPGP_PAGE']);
+		$this->u_action = $this->helper->route('clausi_epgp_controller_character');
+		
+		return $this->helper->render('epgp_character.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
 	
@@ -102,7 +99,7 @@ class main_controller implements main_interface
 		
 		return false;
 	}
-	
+
 	
 	private function var_display($var)
 	{

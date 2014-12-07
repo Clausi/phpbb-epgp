@@ -2,10 +2,10 @@ clausi_epgp_controller:
     path: /epgp/index
     defaults: { _controller: clausi.epgp.main.controller:index }
 
-clausi_epgp_controller_raid:
-    path: /epgp/raid/{raid_id}
-    defaults: { _controller: clausi.epgp.main.controller:raid, raid: "0" }
+clausi_epgp_controller_snapshot:
+    path: /epgp/snapshot/{snap_id}
+    defaults: { _controller: clausi.epgp.main.controller:snapshot, snap_id: "0" }
 
-clausi_epgp_controller_user:
-    path: /epgp/user/{user_id}
-    defaults: { _controller: clausi.epgp.main.controller:user, user: "0" }
+clausi_epgp_controller_character:
+    path: /epgp/character/{char_id}
+    defaults: { _controller: clausi.epgp.main.controller:character, char_id: "0" }
