@@ -145,9 +145,9 @@ class admin_controller implements admin_interface
 	private function createGuild($name, $realm, $region, $min_ep, $base_gp, $extras_p, $decay_p)
 	{
 		$sql_ary = array(
-			'name' => $name,
-			'realm' => $realm,
-			'region' => $region,
+			'name' => strtolower($name),
+			'realm' => strtolower($realm),
+			'region' => strtolower($region),
 			'min_ep' => $min_ep,
 			'base_gp' => $base_gp,
 			'extras_p' => $extras_p,

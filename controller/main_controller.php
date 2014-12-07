@@ -80,9 +80,9 @@ class main_controller implements main_interface
 	public function getGuild($name, $realm, $region)
 	{
 		$sql_ary = array(
-			'name' => $name,
-			'region' => $region,
-			'realm' => $realm,
+			'name' => strtolower($name),
+			'realm' => strtolower($realm),
+			'region' => strtolower($region),
 		);
 
 		$sql = "SELECT * FROM 

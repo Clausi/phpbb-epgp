@@ -62,13 +62,13 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'epgp_standings' => array(
 					'COLUMNS' => array(
 						'epgp_id' => array('UINT', NULL, 'auto_increment'),
+						'char_id' => array('UINT', NULL),
 						'guild_id' => array('UINT', NULL),
 						'snap_id' => array('UINT', NULL),
-						'uniquekey' => array('VCHAR:50', NULL),
 						'name' => array('VCHAR:50', NULL),
 						'realm' => array('VCHAR:50', NULL),
-						'ep' => array('INT:7', 0),
-						'gp' => array('INT:7', 0),
+						'ep' => array('UINT', 0),
+						'gp' => array('UINT', 0),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
 						'deleted' => array('TIMESTAMP', 0),
@@ -79,15 +79,29 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'epgp_items' => array(
 					'COLUMNS' => array(
 						'item_id' => array('UINT', NULL, 'auto_increment'),
-						'game_id' => array('INT:10', NULL),
 						'snap_id' => array('UINT', NULL),
-						'uniquekey' => array('VCHAR:50', NULL),
-						'name' => array('VCHAR:50', NULL),
+						'char_id' => array('UINT', NULL),
+						'game_id' => array('UINT', NULL),
+						'itemstring' => array('VCHAR:100', NULL),
+						'gp' => array('UINT', 0),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
 						'deleted' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> 'item_id',
+				),
+				
+				$this->table_prefix . 'epgp_characters' => array(
+					'COLUMNS' => array(
+						'char_id' => array('UINT', NULL),
+						'guild_id' => array('UINT', NULL),
+						'name' => array('VCHAR:100', NULL),
+						'realm' => array('VCHAR:50', NULL),
+						'created' => array('TIMESTAMP', 0),
+						'modified' => array('TIMESTAMP', 0),
+						'deleted' => array('TIMESTAMP', 0),
+					),
+					'PRIMARY_KEY'	=> 'char_id',
 				),
 				
 				$this->table_prefix . 'epgp_guilds' => array(
@@ -120,6 +134,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'epgp_snapshots',
 				$this->table_prefix . 'epgp_standings',
 				$this->table_prefix . 'epgp_guilds',
+				$this->table_prefix . 'epgp_characters',
 				$this->table_prefix . 'epgp_items',
 			),
 		);
