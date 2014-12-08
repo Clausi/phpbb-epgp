@@ -126,6 +126,29 @@ class main_controller implements main_interface
 	}
 	
 	
+	public function getCharacterById($char_id)
+	{
+		$sql_ary = array(
+			'char_id' => $char_id,
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_characters') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row[0];
+		
+		return false;
+	}
+	
+	
 	public function getSnapshot($guild_id, $snaphot_time)
 	{
 		$sql_ary = array(
