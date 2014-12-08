@@ -83,10 +83,59 @@ class main_controller implements main_interface
 			'name' => strtolower($name),
 			'realm' => strtolower($realm),
 			'region' => strtolower($region),
+			'deleted' => 0,
 		);
 
 		$sql = "SELECT * FROM 
 			" . $this->container->getParameter('tables.clausi.epgp_guilds') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row[0];
+		
+		return false;
+	}
+	
+	
+	public function getCharacter($name, $realm)
+	{
+		$sql_ary = array(
+			'name' => $name,
+			'realm' => strtolower($realm),
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_characters') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row[0];
+		
+		return false;
+	}
+	
+	
+	public function getSnapshot($guild_id, $snaphot_time)
+	{
+		$sql_ary = array(
+			'guild_id' => $guild_id,
+			'snapshot_time' => $snaphot_time,
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";

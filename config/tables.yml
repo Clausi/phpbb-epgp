@@ -1,4 +1,6 @@
 parameters:
-    tables.clausi.epgp_standings: %core.table_prefix%epgp_standings
-    tables.clausi.epgp_items: %core.table_prefix%epgp_items
+    tables.clausi.epgp_characters: %core.table_prefix%epgp_characters
     tables.clausi.epgp_guilds: %core.table_prefix%epgp_guilds
+    tables.clausi.epgp_items: %core.table_prefix%epgp_items
+    tables.clausi.epgp_snapshots: %core.table_prefix%epgp_snapshots
+    tables.clausi.epgp_standings: %core.table_prefix%epgp_standings

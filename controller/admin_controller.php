@@ -24,6 +24,9 @@ class admin_controller implements admin_interface
 	protected $epgp;
 	
 	protected $guild;
+	protected $log;
+	protected $snap_id;
+	protected $snapshot;
 
 	/**
 	* Constructor
@@ -63,6 +66,7 @@ class admin_controller implements admin_interface
 		$this->template->assign_vars(array(
 			'U_ACTION'	=> $this->u_action,
 			'CLAUSI_EPGP_ACTIVE' => $this->config['clausi_epgp_active'],
+			'CLAUSI_EPGP_BNETKEY' => $this->config['clausi_epgp_bnetkey'],
 		));
 	}
 	
@@ -78,12 +82,12 @@ class admin_controller implements admin_interface
 				trigger_error('FORM_INVALID');
 			}
 			
-			$log = htmlspecialchars_decode($this->request->variable('epgp_log', '', true));
-			if($log == '') trigger_error($this->user->lang('ACP_EPGP_UPLOAD_ERROR') . adm_back_link($this->u_action));
+			$log_text = htmlspecialchars_decode($this->request->variable('epgp_log', '', true));
+			if($log_text == '') trigger_error($this->user->lang('ACP_EPGP_UPLOAD_ERROR') . adm_back_link($this->u_action), E_USER_WARNING);
 
-			$log = json_decode($log);
+			$this->log = json_decode($log_text);
 
-			if( ! $log || $log == NULL ) 
+			if( ! $this->log || $this->log == NULL ) 
 			{
 				switch (json_last_error()) {
 					case JSON_ERROR_NONE:
@@ -108,16 +112,23 @@ class admin_controller implements admin_interface
 						$error = ' - Unknown error';
 					break;
 				}
-				trigger_error($this->user->lang('ACP_EPGP_UPLOAD_JSONERROR') . $error . adm_back_link($this->u_action));
+				trigger_error($this->user->lang('ACP_EPGP_UPLOAD_JSONERROR') . $error . adm_back_link($this->u_action),  E_USER_WARNING);
 			}
 			
-			$this->guild = $this->epgp->getGuild($log->guild, $log->realm, $log->region);
+			$this->guild = $this->epgp->getGuild($this->log->guild, $this->log->realm, $this->log->region);
+			if($this->guild === false) $this->createGuild();
+			else $this->updateGuild();
 
-			if($this->guild === false) $this->createGuild($log->guild, $log->realm, $log->region, $log->min_ep, $log->base_gp, $log->extras_p, $log->decay_p);
-			else $this->updateGuild($log->guild, $log->realm, $log->region, $log->min_ep, $log->base_gp, $log->extras_p, $log->decay_p);
-			
-			$epgp_note = $this->request->variable('epgp_note', '', true);
-			$this->setSnapshotNote($epgp_note);
+			$this->snapshot = $this->epgp->getSnapshot($this->guild['guild_id'], $this->log->timestamp);
+			if($this->snapshot === false) 
+			{
+				$note = $this->request->variable('epgp_note', '', true);
+				$this->createSnapshot($log_text, $note);
+			}
+			else trigger_error($this->user->lang('ACP_EPGP_UPLOAD_SNAPSHOT_EXISTS') . adm_back_link($this->u_action), E_USER_WARNING);
+
+			$this->createStandings();
+			$this->createItems();
 
 			trigger_error($this->user->lang('ACP_EPGP_UPLOAD_SAVED') . adm_back_link($this->u_action));
 		}
@@ -130,6 +141,27 @@ class admin_controller implements admin_interface
 	
 	public function display_snapshots()
 	{
+		$sql_ary = array(
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('n_snapshots', array(
+				'DATE' => date('d.m.Y - H:i:s', $row['snapshot_time']),
+				'NOTE' => $row['note'],
+				'U_DELETE' => $this->u_action . '&amp;snap_id=' . $row['snap_id'] . '&amp;action=delete',
+			));
+		}
+		$this->db->sql_freeresult($result);
+		
 		$this->template->assign_vars(array(
 			'U_ACTION'	=> $this->u_action,
 		));
@@ -139,36 +171,37 @@ class admin_controller implements admin_interface
 	private function set_options()
 	{
 		$this->config->set('clausi_epgp_active', $this->request->variable('clausi_epgp_active', 0));
+		$this->config->set('clausi_epgp_bnetkey', $this->request->variable('clausi_epgp_bnetkey', ''));
 	}
 
 	
-	private function createGuild($name, $realm, $region, $min_ep, $base_gp, $extras_p, $decay_p)
+	private function createGuild()
 	{
 		$sql_ary = array(
-			'name' => strtolower($name),
-			'realm' => strtolower($realm),
-			'region' => strtolower($region),
-			'min_ep' => $min_ep,
-			'base_gp' => $base_gp,
-			'extras_p' => $extras_p,
-			'decay_p' => $decay_p,
+			'name' => strtolower($this->log->guild),
+			'realm' => strtolower($this->log->realm),
+			'region' => strtolower($this->log->region),
+			'min_ep' => $this->log->min_ep,
+			'base_gp' => $this->log->base_gp,
+			'extras_p' => $this->log->extras_p,
+			'decay_p' => $this->log->decay_p,
 			'created' => time(),
 			'modified' => time()
 		);
 		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_guilds') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
-		$this->guild = $this->epgp->getGuild($name, $realm, $region);
+		$this->guild = $this->epgp->getGuild($this->log->guild, $this->log->realm, $this->log->region);
 	}
-	
-	
-	private function updateGuild($name, $realm, $region, $min_ep, $base_gp, $extras_p, $decay_p)
+
+
+	private function updateGuild()
 	{
 		$sql_ary = array(
-			'min_ep' => $min_ep,
-			'base_gp' => $base_gp,
-			'extras_p' => $extras_p,
-			'decay_p' => $decay_p,
+			'min_ep' => $this->log->min_ep,
+			'base_gp' => $this->log->base_gp,
+			'extras_p' => $this->log->extras_p,
+			'decay_p' => $this->log->decay_p,
 			'modified' => time()
 		);
 		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_guilds') . ' SET 
@@ -176,13 +209,117 @@ class admin_controller implements admin_interface
 			WHERE guild_id = ' . $this->guild['guild_id'];
 		$this->db->sql_query($sql);
 		
-		$this->guild = $this->epgp->getGuild($name, $realm, $region);
+		$this->guild = $this->epgp->getGuild($this->log->guild, $this->log->realm, $this->log->region);
 	}
 	
 	
-	private function setSnapshotNote($note)
+	private function createCharacter($name, $realm)
 	{
+		$sql_ary = array(
+			'guild_id' => $this->guild['guild_id'],
+			'name' => $name,
+			'realm' => strtolower($realm),
+			'created' => time(),
+			'modified' => time()
+		);
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_characters') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
 		
+		return $this->db->sql_nextid();
+	}
+	
+	
+	private function createSnapshot($log_text, $note = '')
+	{
+		$sql_ary = array(
+			'guild_id' => $this->guild['guild_id'],
+			'snapshot_time' => $this->log->timestamp,
+			'log' => $log_text,
+			'note' => $note,
+			'created' => time(),
+			'modified' => time()
+		);
+
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_snapshots') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+		
+		$this->snap_id = $this->db->sql_nextid();
+	}
+	
+	
+	public function deleteSnapshot($snap_id)
+	{
+		if(!$snap_id || $snap_id == 0) trigger_error('INVALID_ID');
+		
+		$sql_ary = array(
+			'deleted' => time(),
+		);
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_snapshots') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
+		$this->db->sql_query($sql);
+		
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_standings') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
+		$this->db->sql_query($sql);
+		
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_items') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
+		$this->db->sql_query($sql);
+	}
+	
+	
+	private function createStandings()
+	{
+		foreach($this->log->roster as $roster)
+		{
+			$character = explode('-', $roster[0]);
+			$char_name = $character[0];
+			if( ! empty($character[1]) ) $char_realm = $character[1];
+			else $char_realm = $this->guild['realm'];
+			
+			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm) ) $char = $this->createCharacter($char_name, $char_realm);
+			
+			$sql_ary = array(
+				'char_id' => $char['char_id'],
+				'guild_id' => $this->guild['guild_id'],
+				'snap_id' => $this->snap_id,
+				'ep' => $roster[1],
+				'gp' => $roster[2],
+				'created' => time(),
+				'modified' => time()
+			);
+
+			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_standings') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+			$this->db->sql_query($sql);
+		}
+	}
+	
+	
+	private function createItems()
+	{
+		foreach($this->log->loot as $loot)
+		{
+			$character = explode('-', $loot[1]);
+			$char_name = $character[0];
+			if( ! empty($character[1]) ) $char_realm = $character[1];
+			else $char_realm = $this->guild['realm'];
+			
+			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm) ) $char = $this->createCharacter($char_name, $char_realm);
+			
+			$game_id = explode(':', $loot[2]);
+			$game_id = $game_id[1];
+			
+			$sql_ary = array(
+				'snap_id' => $this->snap_id,
+				'char_id' => $char['char_id'],
+				'game_id' => $game_id,
+				'itemstring' => $loot[2],
+				'looted' => $loot[0],
+				'gp' => $loot[3],
+				'created' => time(),
+				'modified' => time()
+			);
+
+			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_items') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+			$this->db->sql_query($sql);
+		}
 	}
 
 	

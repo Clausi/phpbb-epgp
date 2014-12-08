@@ -32,7 +32,17 @@ class main_module
 			case 'snapshots':
 				$this->tpl_name = 'epgp_snapshots';
 				$this->page_title = $user->lang('ACP_EPGP_SNAPSHOTS');
-				$admin_controller->display_snapshots();
+				switch($action) 
+				{
+					case 'delete':
+						$admin_controller->set_page_url($this->u_action);
+						$admin_controller->deleteSnapshot($request->variable('snap_id', 0));
+					break;
+					default:
+						$admin_controller->set_page_url($this->u_action);
+						$admin_controller->display_snapshots();
+				}
+				
 			break;
 		}
 	}

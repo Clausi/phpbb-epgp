@@ -13,6 +13,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			array('config.add', array('clausi_epgp_active', 0)),
+			array('config.add', array('clausi_epgp_bnetkey', '')),
 
 			array('module.add', array(
 				'acp',
@@ -65,8 +66,6 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'char_id' => array('UINT', NULL),
 						'guild_id' => array('UINT', NULL),
 						'snap_id' => array('UINT', NULL),
-						'name' => array('VCHAR:50', NULL),
-						'realm' => array('VCHAR:50', NULL),
 						'ep' => array('UINT', 0),
 						'gp' => array('UINT', 0),
 						'created' => array('TIMESTAMP', 0),
@@ -84,6 +83,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'game_id' => array('UINT', NULL),
 						'itemstring' => array('VCHAR:100', NULL),
 						'gp' => array('UINT', 0),
+						'looted' => array('TIMESTAMP', 0),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
 						'deleted' => array('TIMESTAMP', 0),
@@ -93,7 +93,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				
 				$this->table_prefix . 'epgp_characters' => array(
 					'COLUMNS' => array(
-						'char_id' => array('UINT', NULL),
+						'char_id' => array('UINT', NULL, 'auto_increment'),
 						'guild_id' => array('UINT', NULL),
 						'name' => array('VCHAR:100', NULL),
 						'realm' => array('VCHAR:50', NULL),

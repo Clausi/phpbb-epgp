@@ -1,18 +1,31 @@
 <!-- INCLUDE overall_header.html -->
 
-<h1>{L_SETTINGS}</h1>
+<h1>{L_ACP_SNAPSHOTS}</h1>
 
-<form id="acp_epgp_snapshots" method="post" action="{U_ACTION}">
-	<fieldset>
-
-		
-		<p class="submit-buttons">
-			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
-		</p>
-
-		{S_FORM_TOKEN}
-	</fieldset>
-</form>
+<table class="table1">
+	<col class="row1" /><col class="row1" /><col class="row2" />
+<tbody>
+	<thead>
+		<tr>
+			<th>{L_SNAPSHOT_TIME}</th>
+			<th>{L_SNAPSHOT_NOTE}</th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<!-- BEGIN n_snapshots -->
+		<tr>
+			<td class="forum-desc">
+				<strong>{n_snapshots.DATE}</strong>
+			</td>
+			<td class="forum-desc">
+				<strong>{n_snapshots.NOTE}</strong>
+			</td>
+			<td class="actions">
+				<a href="{n_snapshots.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a>
+			</td>
+		</tr>
+	<!-- END n_snapshots -->
+</tbody>
+</table>
 
 <!-- INCLUDE overall_footer.html -->
