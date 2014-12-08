@@ -214,19 +214,20 @@ class admin_controller implements admin_interface
 	}
 	
 	
-	private function createCharacter($name, $realm)
+	private function createCharacter($name, $realm, $region)
 	{
 		$sql_ary = array(
 			'guild_id' => $this->guild['guild_id'],
 			'name' => $name,
 			'realm' => $realm,
+			'region' => $region,
 			'created' => time(),
 			'modified' => time()
 		);
 		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_characters') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
-		return $this->epgp->getCharacter($name, $realm);
+		return $this->epgp->getCharacter($name, $realm, $region);
 	}
 	
 	
@@ -275,7 +276,7 @@ class admin_controller implements admin_interface
 			if( ! empty($character[1]) ) $char_realm = $character[1];
 			else $char_realm = $this->guild['realm'];
 			
-			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm) ) $char = $this->createCharacter($char_name, $char_realm);
+			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm, $this->guild['region']) ) $char = $this->createCharacter($char_name, $char_realm, $this->guild['region']);
 			
 			$sql_ary = array(
 				'char_id' => $char['char_id'],
@@ -302,7 +303,7 @@ class admin_controller implements admin_interface
 			if( ! empty($character[1]) ) $char_realm = $character[1];
 			else $char_realm = $this->guild['realm'];
 			
-			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm) ) $char = $this->createCharacter($char_name, $char_realm);
+			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm, $this->guild['region']) ) $char = $this->createCharacter($char_name, $char_realm, $this->guild['region']);
 			
 			$game_id = explode(':', $loot[2]);
 			$game_id = $game_id[1];

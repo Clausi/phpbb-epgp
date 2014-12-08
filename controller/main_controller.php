@@ -102,11 +102,12 @@ class main_controller implements main_interface
 	}
 	
 	
-	public function getCharacter($name, $realm)
+	public function getCharacter($name, $realm, $region)
 	{
 		$sql_ary = array(
 			'name' => $name,
 			'realm' => $realm,
+			'region' => $region,
 			'deleted' => 0,
 		);
 

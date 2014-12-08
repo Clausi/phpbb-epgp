@@ -97,6 +97,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'guild_id' => array('UINT', NULL),
 						'name' => array('VCHAR:100', NULL),
 						'realm' => array('VCHAR:50', NULL),
+						'region' => array('VCHAR:20', NULL),
 						'created' => array('TIMESTAMP', 0),
 						'modified' => array('TIMESTAMP', 0),
 						'deleted' => array('TIMESTAMP', 0),
@@ -108,8 +109,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 					'COLUMNS' => array(
 						'guild_id' => array('UINT', NULL, 'auto_increment'),
 						'name' => array('VCHAR:50', NULL),
-						'region' => array('VCHAR:50', NULL),
 						'realm' => array('VCHAR:50', NULL),
+						'region' => array('VCHAR:20', NULL),
 						'min_ep' => array('UINT', 0),
 						'base_gp' => array('UINT', 0),
 						'decay_p' => array('TINT:4', 0),
