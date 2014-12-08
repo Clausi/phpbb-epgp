@@ -179,9 +179,9 @@ class admin_controller implements admin_interface
 	private function createGuild()
 	{
 		$sql_ary = array(
-			'name' => strtolower($this->log->guild),
-			'realm' => strtolower($this->log->realm),
-			'region' => strtolower($this->log->region),
+			'name' => $this->log->guild,
+			'realm' => $this->log->realm,
+			'region' => $this->log->region,
 			'min_ep' => $this->log->min_ep,
 			'base_gp' => $this->log->base_gp,
 			'extras_p' => $this->log->extras_p,
@@ -219,7 +219,7 @@ class admin_controller implements admin_interface
 		$sql_ary = array(
 			'guild_id' => $this->guild['guild_id'],
 			'name' => $name,
-			'realm' => strtolower($realm),
+			'realm' => $realm,
 			'created' => time(),
 			'modified' => time()
 		);
