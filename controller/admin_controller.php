@@ -144,17 +144,18 @@ class admin_controller implements admin_interface
 		$sql_ary = array(
 			'deleted' => 0,
 		);
-
 		$sql = "SELECT * FROM 
 			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			ORDER BY snapshot_time DESC
 			";
 		$result = $this->db->sql_query($sql);
 
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('n_snapshots', array(
+				'ID' => $row['snap_id'],
 				'DATE' => date('d.m.Y - H:i:s', $row['snapshot_time']),
 				'NOTE' => $row['note'],
 				'U_DELETE' => $this->u_action . '&amp;snap_id=' . $row['snap_id'] . '&amp;action=delete',

@@ -3,10 +3,11 @@
 <h1>{L_ACP_SNAPSHOTS}</h1>
 
 <table class="table1">
-	<col class="row1" /><col class="row1" /><col class="row2" />
+	<col class="row1" /><col class="row1" /><col class="row1" /><col class="row2" />
 <tbody>
 	<thead>
 		<tr>
+			<th>Id</th>
 			<th>{L_SNAPSHOT_TIME}</th>
 			<th>{L_SNAPSHOT_NOTE}</th>
 			<th>&nbsp;</th>
@@ -14,6 +15,9 @@
 	</thead>
 	<!-- BEGIN n_snapshots -->
 		<tr>
+			<td>
+				{n_snapshots.ID}
+			</td>
 			<td class="forum-desc">
 				<strong>{n_snapshots.DATE}</strong>
 			</td>
