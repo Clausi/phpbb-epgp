@@ -225,7 +225,7 @@ class admin_controller implements admin_interface
 		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_characters') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
-		return $this->db->sql_nextid();
+		return $this->epgp->getCharacter($name, $realm);
 	}
 	
 	
