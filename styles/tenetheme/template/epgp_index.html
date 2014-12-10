@@ -1,8 +1,53 @@
 <!-- INCLUDE overall_header.html -->
 
 <!-- IF S_CLAUSI_EPGP_ACTIVE and U_EPGP -->
-
-Active
+<h2>EPGP Standings</h2>
+<div class="row">
+	<div class="col-md-12">
+		<!-- IF .epgp_standings -->
+		<table class="table table-striped">
+			<thead>
+				<th>#</th>
+				<th>Name</th>
+				<th>EP</th>
+				<th>GP</th>
+				<th><strong>PR</strong></th>
+			</thead>
+			<tbody>
+				<!-- BEGIN epgp_standings -->
+				<tr>
+					<td>{epgp_standings.NO}</td>
+					<td>{epgp_standings.NAME}</td>
+					<td>{epgp_standings.EP} <em><small class="<!-- IF epgp_standings.EP_CHANGE > 0 -->text-success<!-- ELSEIF epgp_standings.EP_CHANGE < 0 -->text-danger<!-- ENDIF -->">{epgp_standings.EP_CHANGE}</small></em></td>
+					<td>{epgp_standings.GP} <em><small class="<!-- IF epgp_standings.GP_CHANGE > 0 -->text-success<!-- ELSEIF epgp_standings.GP_CHANGE < 0 -->text-danger<!-- ENDIF -->">{epgp_standings.GP_CHANGE}</small></em></td>
+					<td><strong>{epgp_standings.PR}</strong></td>
+				</tr>
+				<!-- END epgp_standings -->
+			</tbody>
+		</table>
+		<!-- ENDIF -->
+	</div>
+	<!-- IF .epgp_items -->
+	<div class="col-md-12">
+		<h3>Latest Items</h3>
+		<ul>
+			<!-- BEGIN epgp_items -->
+			<li><a href="http://de.wowhead.com/?item={epgp_items.GAME_ID}" rel="bonus={epgp_items.ITEM_BONUS}"></a><small> by {epgp_items.LOOTER} for {epgp_items.ITEM_GP} GP at {epgp_items.LOOTED}</small></li>
+			<!-- END epgp_items -->
+		</ul>
+	</div>
+	<!-- ENDIF -->
+	
+	<div class="col-md-12">
+		<h3>EPGP Settings</h3>
+		<ul class="list-inline">
+			<li>Decay: {DECAY}</li>
+			<li>Base GP: {BASE_GP}</li>
+			<li>Min EP: {MIN_EP}</li>
+			<li>Extras: {EXTRAS}</li>
+		</ul>
+	</div>
+</div>
 
 <!-- ELSE -->
 

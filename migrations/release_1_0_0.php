@@ -14,6 +14,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 		return array(
 			array('config.add', array('clausi_epgp_active', 0)),
 			array('config.add', array('clausi_epgp_bnetkey', '')),
+			array('config.add', array('clausi_epgp_guild', 1)),
 
 			array('module.add', array(
 				'acp',

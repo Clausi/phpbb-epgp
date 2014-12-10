@@ -127,6 +127,7 @@ class admin_controller implements admin_interface
 			}
 			else trigger_error($this->user->lang('ACP_EPGP_UPLOAD_SNAPSHOT_EXISTS') . adm_back_link($this->u_action), E_USER_WARNING);
 
+			$this->cleanCharacters();
 			$this->createStandings();
 			$this->createItems();
 
@@ -214,23 +215,6 @@ class admin_controller implements admin_interface
 	}
 	
 	
-	private function createCharacter($name, $realm, $region)
-	{
-		$sql_ary = array(
-			'guild_id' => $this->guild['guild_id'],
-			'name' => $name,
-			'realm' => $realm,
-			'region' => $region,
-			'created' => time(),
-			'modified' => time()
-		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_characters') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
-		$this->db->sql_query($sql);
-		
-		return $this->epgp->getCharacter($name, $realm, $region);
-	}
-	
-	
 	private function createSnapshot($log_text, $note = '')
 	{
 		$sql_ary = array(
@@ -277,7 +261,8 @@ class admin_controller implements admin_interface
 			else $char_realm = $this->guild['realm'];
 			
 			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm, $this->guild['region']) ) $char = $this->createCharacter($char_name, $char_realm, $this->guild['region']);
-			
+			if( $char['deleted'] > 0 ) $char = $this->activateCharacter($char['char_id']);
+
 			$sql_ary = array(
 				'char_id' => $char['char_id'],
 				'guild_id' => $this->guild['guild_id'],
@@ -304,6 +289,7 @@ class admin_controller implements admin_interface
 			else $char_realm = $this->guild['realm'];
 			
 			if( ! $char = $this->epgp->getCharacter($char_name, $char_realm, $this->guild['region']) ) $char = $this->createCharacter($char_name, $char_realm, $this->guild['region']);
+			if( $char['deleted'] > 0 ) $char = $this->activateCharacter($char['char_id']);
 			
 			$game_id = explode(':', $loot[2]);
 			$game_id = $game_id[1];
@@ -321,6 +307,96 @@ class admin_controller implements admin_interface
 
 			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_items') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			$this->db->sql_query($sql);
+		}
+	}
+	
+	
+	private function createCharacter($name, $realm, $region)
+	{
+		$sql_ary = array(
+			'guild_id' => $this->guild['guild_id'],
+			'name' => $name,
+			'realm' => $realm,
+			'region' => $region,
+			'created' => time(),
+			'modified' => time()
+		);
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_characters') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+		
+		return $this->epgp->getCharacter($name, $realm, $region);
+	}
+	
+	
+	public function activateCharacter($char_id)
+	{
+		$sql_ary = array(
+			'deleted' => 0,
+		);
+		
+		$sql = "UPDATE 
+			" . $this->container->getParameter('tables.clausi.epgp_characters') . " 
+			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . "
+			WHERE char_id = " . $char_id . "";
+		$result = $this->db->sql_query($sql);
+		
+		return $this->epgp->getCharacterById($char_id);
+	}
+	
+	
+	public function deactivateCharacter($char_id)
+	{
+		$sql_ary = array(
+			'deleted' => time(),
+		);
+
+		$sql = "UPDATE 
+			" . $this->container->getParameter('tables.clausi.epgp_characters') . " 
+			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . "
+			WHERE char_id = " . $char_id . "";
+		$result = $this->db->sql_query($sql);
+		
+		return $this->epgp->getCharacterById($char_id);
+	}
+	
+	
+	private function cleanCharacters()
+	{
+		$sql_ary = array(
+			'guild_id' => $this->guild['guild_id'],
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_characters') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+		$this->db->sql_freeresult($result);
+
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			$found = false;
+			$char_id = 0;
+			foreach($this->log->roster as $roster)
+			{
+				$character = explode('-', $roster[0]);
+				$char_name = $character[0];
+				if( ! empty($character[1]) ) $char_realm = $character[1];
+				else $char_realm = $this->guild['realm'];
+				
+				$char_id = $row['char_id'];
+				
+				if($row['name'] == $char_name && $row['realm'] == $char_realm) 
+				{
+					$found = true;
+					$char_id = 0;
+					break;
+				}
+			}
+			
+			if( $found == false ) $this->deactivateCharacter($char_id);
 		}
 	}
 
