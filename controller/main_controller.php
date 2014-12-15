@@ -143,6 +143,31 @@ class main_controller implements main_interface
 			));
 		}
 		
+		// Snapshots
+		$sql_ary = array(
+			'deleted' => 0,
+		);
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			ORDER BY snapshot_time DESC
+			";
+		$result = $this->db->sql_query_limit($sql, 7);
+
+		$latest = true;
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('n_snapshots', array(
+				'ID' => $row['snap_id'],
+				'LATEST' => $latest,
+				'DATE' => $this->user->format_date($row['snapshot_time']),
+				'U_SNAPSHOT' => $this->helper->route('clausi_epgp_controller_snapshot', array('snap_id' => $row['snap_id'])),
+			));
+			if($latest === true) $latest = false;
+		}
+		$this->db->sql_freeresult($result);
+		
 		$this->u_action = $this->helper->route('clausi_epgp_controller');
 		return $this->helper->render('epgp_index.html', $this->user->lang['EPGP_PAGE']);
 	}
@@ -156,8 +181,133 @@ class main_controller implements main_interface
 			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
 		}
 		
-		$this->u_action = $this->helper->route('clausi_epgp_controller_snapshot');
+		// Standings
+		$this->guild = $this->getGuildById($this->config['clausi_epgp_guild']);
+
+		$current_snapshot = $this->getSnapshotById($snap_id);
 		
+		$this->template->assign_vars(array(
+			'DECAY' => $this->guild['decay_p'],
+			'BASE_GP' => $this->guild['base_gp'],
+			'MIN_EP' => $this->guild['min_ep'],
+			'EXTRAS' => $this->guild['extras_p'],
+			'SNAPSHOT_DATE' => $this->user->format_date($current_snapshot['snapshot_time']),
+		));
+		
+		$sql_ary = array(
+			'SELECT' => 'snap_id',
+			'FROM' => array(
+				$this->container->getParameter('tables.clausi.epgp_snapshots') => 's',
+			),
+			'WHERE' => 's.snapshot_time < ' . $current_snapshot['snapshot_time'] . ' AND s.deleted = 0',
+			'ORDER_BY' => 'snapshot_time DESC',
+		);
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query_limit($sql, 1);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+				
+		if( ! empty($row[0])) $previous_snapshot = $this->getSnapshotById($row[0]['snap_id']);
+		else $previous_snapshot = false;
+
+		if( $previous_snapshot != false ) {
+			$previous_snap_id = $previous_snapshot['snap_id'];
+			$previous_standings = $this->getStandings($previous_snap_id);
+		}
+		else $previous_snap_id = false;
+		
+		$current_standings = $this->getStandings($snap_id);
+		$current_items = $this->getItems($snap_id);
+		$i = 1;
+		foreach($current_standings as $standing)
+		{
+			if($previous_snap_id != false)
+			{
+				foreach($previous_standings as $previous)
+				{
+					if($standing['char_id'] == $previous['char_id'])
+					{
+						$ep_change = $standing['ep'] - $previous['ep'];
+						$gp_change = $standing['gp'] - $previous['gp'];
+					}
+				}
+			}
+			else 
+			{
+				$ep_change = '';
+				$gp_change = '';
+			}
+		
+			$this->template->assign_block_vars('epgp_standings', array(
+				'NO' => $i,
+				'NAME' => $this->getCharacterById($standing['char_id'])['name'],
+				'EP' => $standing['ep'],
+				'EP_CHANGE' => ($ep_change != 0) ? $ep_change : '',
+				'GP' => $standing['gp'],
+				'GP_CHANGE' => ($gp_change != 0) ? $gp_change : '',
+				'PR' => ($standing['gp'] > 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
+			));
+			
+			$i++;
+		}
+		
+		if(is_array($current_items))
+		{
+			$items = $current_items;
+		}
+		// elseif(is_array($previous_items))
+		// {
+			// $items = $previous_items;
+		// }
+		else $items = array();
+		
+		foreach($items as $item)
+		{
+			$itemstring = explode(':', $item['itemstring']);
+			$bonus = '';
+			if($itemstring[12] > 0)
+			{
+				for($i = 13; $i < 13+$itemstring[12]; $i++)
+				{
+					if($i > 13) $bonus .= ':';
+					$bonus .= $itemstring[$i];
+				}
+			}
+			
+			$this->template->assign_block_vars('epgp_items', array(
+				'GAME_ID' => $item['game_id'],
+				'ITEM_BONUS' => $bonus,
+				'ITEM_GP' => $item['gp'],
+				'LOOTED' => $this->user->format_date($item['looted']),
+				'LOOTER' => $this->getCharacterById($item['char_id'])['name'],
+			));
+		}
+		
+		// Snapshots
+		$sql_ary = array(
+			'deleted' => 0,
+		);
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			ORDER BY snapshot_time DESC
+			";
+		$result = $this->db->sql_query_limit($sql, 6);
+
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('n_snapshots', array(
+				'ID' => $row['snap_id'],
+				'CURRENT' => ($row['snap_id'] == $snap_id) ? true : false,
+				'DATE' => $this->user->format_date($row['snapshot_time']),
+				'U_SNAPSHOT' => $this->helper->route('clausi_epgp_controller_snapshot', array('snap_id' => $row['snap_id'])),
+			));
+		}
+		$this->db->sql_freeresult($result);
+		
+		$this->u_action = $this->helper->route('clausi_epgp_controller_snapshot');
 		return $this->helper->render('epgp_snapshot.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
@@ -277,6 +427,28 @@ class main_controller implements main_interface
 			'guild_id' => $guild_id,
 			'snapshot_time' => $snaphot_time,
 			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row[0];
+		
+		return false;
+	}
+	
+	
+	public function getSnapshotById($snap_id)
+	{
+		$sql_ary = array(
+			'snap_id' => $snap_id,
 		);
 
 		$sql = "SELECT * FROM 

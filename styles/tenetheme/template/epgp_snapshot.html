@@ -1,7 +1,7 @@
 <!-- INCLUDE overall_header.html -->
 
 <!-- IF S_CLAUSI_EPGP_ACTIVE and U_EPGP -->
-<h2>EPGP Standings</h2>
+<h2>EPGP Standings {SNAPSHOT_DATE}</h2>
 <div class="row">
 	<div class="col-md-9">
 		<!-- IF .epgp_standings -->
@@ -31,7 +31,7 @@
 		<h3>Latest Snapshots</h3>
 		<div class="list-group">
 			<!-- BEGIN n_snapshots -->
-			<a href="{n_snapshots.U_SNAPSHOT}" class="list-group-item<!-- IF n_snapshots.LATEST --> active<!-- ENDIF -->">{n_snapshots.DATE}</a>
+			<a href="{n_snapshots.U_SNAPSHOT}" class="list-group-item<!-- IF n_snapshots.CURRENT --> active<!-- ENDIF -->">{n_snapshots.DATE}</a>
 			<!-- END n_snapshots -->
 		</div>
 	</div>
