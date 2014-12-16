@@ -250,7 +250,7 @@ class main_controller implements main_interface
 				'EP_CHANGE' => ($ep_change != 0) ? $ep_change : '',
 				'GP' => $standing['gp'],
 				'GP_CHANGE' => ($gp_change != 0) ? $gp_change : '',
-				'PR' => ($standing['gp'] > 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
+				'PR' => ($standing['gp'] != 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
 			));
 			
 			$i++;

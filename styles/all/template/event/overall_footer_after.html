@@ -1,12 +1,13 @@
 <!-- IF S_CLAUSI_EPGP_ACTIVE and U_EPGP and EPGP_PAGE -->
-<!-- INCLUDEJS highcharts/js/highcharts.js -->
-<!-- INCLUDEJS highcharts/js/themes/gray.js -->
+<!-- INCLUDEJS highstocks/js/highstock.js -->
+<!-- INCLUDEJS highstocks/js/themes/gray.js -->
 <!-- INCLUDEJS epgp.js -->
 
 <!-- IF EPGP_CHAR_PAGE -->
 	<script type="text/javascript">
+	var epgp_chart;
 	$(document).ready(function() {
-		var options = {
+		var epgp_chart = new Highcharts.StockChart({
 			chart: {
 				renderTo: 'character_epgp',
 				type: 'line'
@@ -14,11 +15,13 @@
 			title: {
 				text: 'EPGP Character {CHARNAME}'
 			},
+			rangeSelector : {
+				 selected : 1
+			},
 			xAxis: {
 				type: 'datetime',
 				labels: {
 					format: '{value:%d.%m.%Y}',
-					rotation: 45,
 					align: 'left'
 				}
 			},
@@ -45,9 +48,7 @@
 				}
 				<!-- ENDIF -->
 			]
-		};
-		
-		var chart = new Highcharts.Chart(options);
+		});
 	});
 	</script>
 <!-- ENDIF -->
