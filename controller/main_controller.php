@@ -368,6 +368,7 @@ class main_controller implements main_interface
 		
 		$this->template->assign_vars(array(
 			'CHARNAME' => $character['name'],
+			'MIN_EP' => $this->guild['min_ep'],
 			'EPGP_CHAR_PAGE' => true,
 			'EPGP_PAGE' => true,
 		));

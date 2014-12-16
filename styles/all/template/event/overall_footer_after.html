@@ -12,11 +12,29 @@
 				renderTo: 'character_epgp',
 				type: 'line'
 			},
+			credits: {
+				enabled: false
+			},
+			rangeSelector: {
+				selected: 1
+			},
 			title: {
 				text: 'EPGP Character {CHARNAME}'
 			},
 			yAxis: {
 				min: 0,
+				plotLines: [{
+                value: {MIN_EP},
+                width: 1,
+                color: 'green',
+                dashStyle: 'dash',
+                label: {
+                    text: 'Min EP',
+                    align: 'right',
+                    y: 12,
+                    x: 0
+                }
+            }]
 			},
 			series: 
 			[
@@ -24,14 +42,17 @@
 				{
 					name: 'EP',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.EP}],<!-- END n_standings -->],
+					marker: { enabled: true },
 				},
 				{
 					name: 'GP',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.GP}],<!-- END n_standings -->],
+					marker: { enabled: true },
 				},
 				{
 					name: 'PR',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.PR}],<!-- END n_standings -->],
+					marker: { enabled: true },
 				}
 				<!-- ENDIF -->
 			]
