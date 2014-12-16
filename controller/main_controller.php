@@ -325,26 +325,19 @@ class main_controller implements main_interface
 		$character = $this->getCharacterById($char_id);
 		$charStandings = $this->getStandingsByCharacterId($char_id);
 		
-		
-		
 		if(is_array($charStandings))
 		{
-			$firstDate = true;
 			foreach($charStandings as $standing)
 			{
-				if($firstDate === true) $firstDate = $standing['created'];
+				$snapshot = $this->getSnapshotById($standing['snap_id']);
 				$this->template->assign_block_vars('n_standings', array(
-					'DATE' => date('d.m.Y', $standing['created']),
-					'TIMESTAMP' => $standing['created']*1000,
+					'DATE' => date('d.m.Y', $snapshot['snapshot_time']),
+					'TIMESTAMP' => $snapshot['snapshot_time']*1000,
 					'EP' => $standing['ep'],
 					'GP' => $standing['gp'],
 					'PR' => ($standing['gp'] != 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
 				));
 			}
-			
-			$this->template->assign_vars(array(
-				'FIRST_TIMESTAMP' => $firstDate*1000
-			));
 		}
 		
 		$items = $this->getItemsByCharacterId($char_id);

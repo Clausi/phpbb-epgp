@@ -15,16 +15,6 @@
 			title: {
 				text: 'EPGP Character {CHARNAME}'
 			},
-			rangeSelector : {
-				 selected : 1
-			},
-			xAxis: {
-				type: 'datetime',
-				labels: {
-					format: '{value:%d.%m.%Y}',
-					align: 'left'
-				}
-			},
 			yAxis: {
 				min: 0,
 			},
@@ -34,17 +24,14 @@
 				{
 					name: 'EP',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.EP}],<!-- END n_standings -->],
-					pointStart: {FIRST_TIMESTAMP}
 				},
 				{
 					name: 'GP',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.GP}],<!-- END n_standings -->],
-					pointStart: {FIRST_TIMESTAMP}
 				},
 				{
 					name: 'PR',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.PR}],<!-- END n_standings -->],
-					pointStart: {FIRST_TIMESTAMP}
 				}
 				<!-- ENDIF -->
 			]
