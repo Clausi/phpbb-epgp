@@ -21,6 +21,9 @@
 			title: {
 				text: 'EPGP Character {CHARNAME}'
 			},
+			legend: {
+				enabled: true
+			},
 			yAxis: {
 				min: 0,
 				plotLines: [{
@@ -43,16 +46,19 @@
 					name: 'EP',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.EP}],<!-- END n_standings -->],
 					marker: { enabled: true },
+					color: 'green',
 				},
 				{
 					name: 'GP',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.GP}],<!-- END n_standings -->],
 					marker: { enabled: true },
+					color: 'red',
 				},
 				{
 					name: 'PR',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.PR}],<!-- END n_standings -->],
 					marker: { enabled: true },
+					color: 'yellow',
 				}
 				<!-- ENDIF -->
 			]
