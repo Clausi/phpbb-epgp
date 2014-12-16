@@ -1,0 +1,29 @@
+<!-- INCLUDE overall_header.html -->
+
+<!-- IF S_CLAUSI_EPGP_ACTIVE and U_EPGP -->
+<h2>EPGP Character {CHARNAME}</h2>
+<a href="javascript:history.back()" class="btn btn-default pull-right">{L_BACK}</a>
+<div class="row top10 bottom10">
+	<div class="col-md-12">
+		<div id="character_epgp" style="width:100%; height:400px;"></div>
+	</div>
+
+	<!-- IF .epgp_items -->
+	<div class="col-md-12">
+		<h3>Latest Items</h3>
+		<ul>
+			<!-- BEGIN epgp_items -->
+			<li><a href="http://de.wowhead.com/?item={epgp_items.GAME_ID}" rel="bonus={epgp_items.ITEM_BONUS}">{epgp_items.GAME_ID}</a><small> by {epgp_items.LOOTER} for {epgp_items.ITEM_GP} GP at {epgp_items.LOOTED}</small></li>
+			<!-- END epgp_items -->
+		</ul>
+	</div>
+	<!-- ENDIF -->
+</div>
+
+<!-- ELSE -->
+
+<div class="well">{L_EPGP_INACTIVE}</div>
+
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

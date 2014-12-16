@@ -5,7 +5,7 @@
 <div class="row">
 	<div class="col-md-9">
 		<!-- IF .epgp_standings -->
-		<table class="table table-striped table-condensed">
+		<table class="table table-striped table-hover table-condensed clickable_row">
 			<thead>
 				<th>#</th>
 				<th>Name</th>
@@ -15,9 +15,9 @@
 			</thead>
 			<tbody>
 				<!-- BEGIN epgp_standings -->
-				<tr>
+				<tr data-url="{epgp_standings.U_CHAR}">
 					<td>{epgp_standings.NO}</td>
-					<td>{epgp_standings.NAME}</td>
+					<td><a href="{epgp_standings.U_CHAR}">{epgp_standings.NAME}</a></td>
 					<td>{epgp_standings.EP} <em><small class="<!-- IF epgp_standings.EP_CHANGE > 0 -->text-success<!-- ELSEIF epgp_standings.EP_CHANGE < 0 -->text-danger<!-- ENDIF -->">{epgp_standings.EP_CHANGE}</small></em></td>
 					<td>{epgp_standings.GP} <em><small class="<!-- IF epgp_standings.GP_CHANGE > 0 -->text-success<!-- ELSEIF epgp_standings.GP_CHANGE < 0 -->text-danger<!-- ENDIF -->">{epgp_standings.GP_CHANGE}</small></em></td>
 					<td><strong>{epgp_standings.PR}</strong></td>
