@@ -256,10 +256,6 @@ class main_controller implements main_interface
 		{
 			$items = $current_items;
 		}
-		// elseif(is_array($previous_items))
-		// {
-			// $items = $previous_items;
-		// }
 		else $items = array();
 		
 		foreach($items as $item)
@@ -274,7 +270,7 @@ class main_controller implements main_interface
 					$bonus .= $itemstring[$i];
 				}
 			}
-			
+						
 			$this->template->assign_block_vars('epgp_items', array(
 				'GAME_ID' => $item['game_id'],
 				'ITEM_BONUS' => $bonus,
@@ -294,7 +290,7 @@ class main_controller implements main_interface
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			ORDER BY snapshot_time DESC
 			";
-		$result = $this->db->sql_query_limit($sql, 6);
+		$result = $this->db->sql_query_limit($sql, 7);
 
 		while($row = $this->db->sql_fetchrow($result))
 		{
@@ -523,6 +519,31 @@ class main_controller implements main_interface
 		$result = $this->db->sql_query($sql);
 
 		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row;
+		
+		return false;
+	}
+	
+	
+	public function getItem($char_id, $game_id, $looted)
+	{
+		$sql_ary = array(
+			'char_id' => $char_id,
+			'game_id' => $game_id,
+			'looted' => $looted,
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_items') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query_limit($sql, 1);
+
+		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
 		if( count($row) > 0 ) return $row;

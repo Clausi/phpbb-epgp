@@ -294,19 +294,22 @@ class admin_controller implements admin_interface
 			$game_id = explode(':', $loot[2]);
 			$game_id = $game_id[1];
 			
-			$sql_ary = array(
-				'snap_id' => $this->snap_id,
-				'char_id' => $char['char_id'],
-				'game_id' => $game_id,
-				'itemstring' => $loot[2],
-				'looted' => $loot[0],
-				'gp' => $loot[3],
-				'created' => time(),
-				'modified' => time()
-			);
+			if($this->epgp->getItem($char['char_id'], $game_id, $loot[0]) === false)
+			{
+				$sql_ary = array(
+					'snap_id' => $this->snap_id,
+					'char_id' => $char['char_id'],
+					'game_id' => $game_id,
+					'itemstring' => $loot[2],
+					'looted' => $loot[0],
+					'gp' => $loot[3],
+					'created' => time(),
+					'modified' => time()
+				);
 
-			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_items') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
-			$this->db->sql_query($sql);
+				$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_items') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+				$this->db->sql_query($sql);
+			}
 		}
 	}
 	
