@@ -469,21 +469,37 @@ class main_controller implements main_interface
 	
 	private function getStandings($snap_id)
 	{
-		$sql_ary = array(
+		// Above min_ep
+		$sql_ary_above_minep = array(
 			'SELECT' => '*',
 			'FROM' => array(
 				$this->container->getParameter('tables.clausi.epgp_standings') => 's',
 				$this->container->getParameter('tables.clausi.epgp_characters') => 'c',
 			),
-			'WHERE' => 's.snap_id = '.$snap_id.' AND s.deleted = 0 AND c.char_id = s.char_id',
+			'WHERE' => 's.snap_id = '.$snap_id.' AND s.deleted = 0 AND c.char_id = s.char_id AND s.ep >= '.$this->guild['min_ep'].'',
 			'ORDER_BY' => 's.ep / s.gp DESC, c.name ASC',
 		);
-
-		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary_above_minep);
 		$result = $this->db->sql_query($sql);
-
-		$row = $this->db->sql_fetchrowset($result);
+		$row_above_minep = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
+		
+		// Below min_ep
+		$sql_ary_below_minep = array(
+			'SELECT' => '*',
+			'FROM' => array(
+				$this->container->getParameter('tables.clausi.epgp_standings') => 's',
+				$this->container->getParameter('tables.clausi.epgp_characters') => 'c',
+			),
+			'WHERE' => 's.snap_id = '.$snap_id.' AND s.deleted = 0 AND c.char_id = s.char_id AND s.ep < '.$this->guild['min_ep'].'',
+			'ORDER_BY' => 's.ep / s.gp DESC, c.name ASC',
+		);
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary_below_minep);
+		$result = $this->db->sql_query($sql);
+		$row_below_minep = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		$row = array_merge((array)$row_above_minep, (array)$row_below_minep);
 
 		if( count($row) > 0 ) return $row;
 		
