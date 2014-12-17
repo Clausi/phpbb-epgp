@@ -20,7 +20,7 @@ $lang = array_merge($lang, array(
 	
 	'NAME' => 'Name',
 	'LATEST_ITEMS' => 'Neuest Gegenstände',
-	
+	'AS_FROM' => 'Stand',
 	'LATEST_SNAPSHOTS' => 'Neueste Snapshots',
 	
 	'EPGP_SETTINGS' => 'EPGP Einstellungen',

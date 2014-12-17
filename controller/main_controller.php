@@ -47,14 +47,6 @@ class main_controller implements main_interface
 	{
 		$this->guild = $this->getGuildById($this->config['clausi_epgp_guild']);
 		
-		$this->template->assign_vars(array(
-			'DECAY' => $this->guild['decay_p'],
-			'BASE_GP' => $this->guild['base_gp'],
-			'MIN_EP' => $this->guild['min_ep'],
-			'EXTRAS' => $this->guild['extras_p'],
-			'EPGP_PAGE' => true,
-		));
-		
 		$sql_ary = array(
 			'SELECT' => 'snap_id, guild_id, snapshot_time, note',
 			'FROM' => array(
@@ -77,8 +69,19 @@ class main_controller implements main_interface
 		}
 		else $previous_snap_id = false;
 		
+		$current_snapshot = $this->getSnapshotById($current_snap_id);
+		$this->template->assign_vars(array(
+			'DECAY' => $this->guild['decay_p'],
+			'BASE_GP' => $this->guild['base_gp'],
+			'MIN_EP' => $this->guild['min_ep'],
+			'EXTRAS' => $this->guild['extras_p'],
+			'SNAPSHOT_DATE' => date('d.m.Y, H:i', $current_snapshot['snapshot_time']),
+			'EPGP_PAGE' => true,
+		));
+		
 		$current_standings = $this->getStandings($current_snap_id);
 		$current_items = $this->getItems($current_snap_id);
+		
 		$i = 1;
 		foreach($current_standings as $standing)
 		{
@@ -193,7 +196,7 @@ class main_controller implements main_interface
 			'BASE_GP' => $this->guild['base_gp'],
 			'MIN_EP' => $this->guild['min_ep'],
 			'EXTRAS' => $this->guild['extras_p'],
-			'SNAPSHOT_DATE' => $this->user->format_date($current_snapshot['snapshot_time']),
+			'SNAPSHOT_DATE' => date('d.m.Y, H:i', $current_snapshot['snapshot_time']),
 			'EPGP_PAGE' => true,
 		));
 		
