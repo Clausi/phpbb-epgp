@@ -11,8 +11,27 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
+	'EPGP' => 'EPGP',
 	'EPGP_PAGE' => 'EPGP',
-	'EPGP_INACTIVE' => 'No access',
-	'EPGP_INVALID_CHARACTER' => 'Invalid character id',
-	'EPGP_INVALID_SNAPSHOT' => 'Invalid snapshot id',
+	'EPGP_STANDINGS' => 'EPGP Tabelle',
+	'EPGP_INACTIVE' => 'Kein Zugriff!',
+	'EPGP_INVALID_CHARACTER' => 'Ungültige Charakter ID',
+	'EPGP_INVALID_SNAPSHOT' => 'Ungültige Snapshot ID',
+	
+	'NAME' => 'Name',
+	'LATEST_ITEMS' => 'Neuest Gegenstände',
+	
+	'LATEST_SNAPSHOTS' => 'Neueste Snapshots',
+	
+	'EPGP_SETTINGS' => 'EPGP Einstellungen',
+	'DECAY' => 'Verfall',
+	'BASE_GP' => 'Basis GP',
+	'MIN_EP' => 'Minimum EP',
+	'EXTRAS' => 'Ersatzbank',
+	
+	'EP' => 'EP',
+	'GP' => 'GP',
+	'PR' => 'PR',
+	'EPGP_CHARACTER' => 'EPGP Charakter',
+	'EPGP_BACK' => 'Zurück zur Übersicht',
 ));

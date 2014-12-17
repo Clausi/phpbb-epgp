@@ -11,6 +11,6 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACL_A_EPGP' => 'Can manage EPGP',
-	'ACL_U_EPGP' => 'Can view EPGP',
+	'ACL_A_EPGP' => 'Kann EPGP verwalten',
+	'ACL_U_EPGP' => 'Kann EPGP anzeigen',
 ));

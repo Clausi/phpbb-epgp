@@ -1,17 +1,17 @@
 <!-- INCLUDE overall_header.html -->
 
 <!-- IF S_CLAUSI_EPGP_ACTIVE and U_EPGP -->
-<h2>EPGP Standings {SNAPSHOT_DATE}</h2>
+<h2>{L_EPGP_STANDINGS} {SNAPSHOT_DATE}</h2>
 <div class="row">
 	<div class="col-md-9">
 		<!-- IF .epgp_standings -->
 		<table class="table table-striped table-hover table-condensed clickable_row">
 			<thead>
 				<th>#</th>
-				<th>Name</th>
-				<th>EP</th>
-				<th>GP</th>
-				<th><strong>PR</strong></th>
+				<th>{L_NAME}</th>
+				<th>{L_EP}</th>
+				<th>{L_GP}</th>
+				<th><strong>{L_PR}</strong></th>
 			</thead>
 			<tbody>
 				<!-- BEGIN epgp_standings -->
@@ -28,7 +28,7 @@
 		<!-- ENDIF -->
 	</div>
 	<div class="col-md-3">
-		<h3>Latest Snapshots</h3>
+		<h3>{L_LATEST_SNAPSHOTS}</h3>
 		<div class="list-group">
 			<!-- BEGIN n_snapshots -->
 			<a href="{n_snapshots.U_SNAPSHOT}" class="list-group-item<!-- IF n_snapshots.CURRENT --> active<!-- ENDIF -->">{n_snapshots.DATE}</a>
@@ -37,7 +37,7 @@
 	</div>
 	<!-- IF .epgp_items -->
 	<div class="col-md-12">
-		<h3>Latest Items</h3>
+		<h3>{L_LATEST_ITEMS}</h3>
 		<ul>
 			<!-- BEGIN epgp_items -->
 			<li><a href="http://de.wowhead.com/?item={epgp_items.GAME_ID}" rel="bonus={epgp_items.ITEM_BONUS}">{epgp_items.GAME_ID}</a><small> by {epgp_items.LOOTER} for {epgp_items.ITEM_GP} GP at {epgp_items.LOOTED}</small></li>
@@ -47,12 +47,12 @@
 	<!-- ENDIF -->
 	
 	<div class="col-md-12">
-		<h3>EPGP Settings</h3>
+		<h3>{L_EPGP_SETTINGS}</h3>
 		<ul class="list-inline">
-			<li>Decay: {DECAY}</li>
-			<li>Base GP: {BASE_GP}</li>
-			<li>Min EP: {MIN_EP}</li>
-			<li>Extras: {EXTRAS}</li>
+			<li>{L_DECAY}: {DECAY}%</li>
+			<li>{L_BASE_GP}: {BASE_GP}</li>
+			<li>{L_MIN_EP}: {MIN_EP}</li>
+			<li>{L_EXTRAS}: {EXTRAS}%</li>
 		</ul>
 	</div>
 </div>

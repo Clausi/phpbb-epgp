@@ -15,6 +15,7 @@ $lang = array_merge($lang, array(
 	'ACP_EPGP_SETTING_SAVED' => 'Settings saved',
 	'ACP_EPGP_BNETKEY' => 'Battle.net API Key',
 	'ACP_EPGP_BNETKEY_EXPLAIN' => 'While uploading a snapshot guildroster is pulled from the battle.net api to deactivate left guild characters. Needs php setting "allow_url_fopen = true". You can get a free key here: <a href="http://dev.battle.net" target="_blank">http://dev.battle.net</a>',
+	'ACP_EPGP_ACTIVE_GUILD' => 'Active Guild',
 	
 	'ACP_EPGP_UPLOAD_SAVED' => 'EPGP log uploaded',
 	'ACP_EPGP_UPLOAD_ERROR' => 'EPGP log empty',

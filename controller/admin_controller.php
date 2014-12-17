@@ -62,10 +62,26 @@ class admin_controller implements admin_interface
 			$this->set_options();
 			trigger_error($this->user->lang('ACP_EPGP_SETTING_SAVED') . adm_back_link($this->u_action));
 		}
+		
+		$guilds = $this->getGuilds();
+		
+		if($guilds !== false)
+		{
+			foreach($guilds as $guild)
+			{
+				$this->template->assign_block_vars('n_guilds', array(
+					'GUILD_ID' => $guild['guild_id'],
+					'NAME' => $guild['name'],
+					'REALM' => $guild['realm'],
+					'REGION' => $guild['region'],
+				));
+			}
+		}
 
 		$this->template->assign_vars(array(
 			'U_ACTION'	=> $this->u_action,
 			'CLAUSI_EPGP_ACTIVE' => $this->config['clausi_epgp_active'],
+			'CLAUSI_EPGP_GUILD' => $this->config['clausi_epgp_guild'],
 			'CLAUSI_EPGP_BNETKEY' => $this->config['clausi_epgp_bnetkey'],
 		));
 	}
@@ -174,6 +190,7 @@ class admin_controller implements admin_interface
 	{
 		$this->config->set('clausi_epgp_active', $this->request->variable('clausi_epgp_active', 0));
 		$this->config->set('clausi_epgp_bnetkey', $this->request->variable('clausi_epgp_bnetkey', ''));
+		$this->config->set('clausi_epgp_guild', $this->request->variable('clausi_epgp_active_guild', 0));
 	}
 
 	
@@ -212,6 +229,28 @@ class admin_controller implements admin_interface
 		$this->db->sql_query($sql);
 		
 		$this->guild = $this->epgp->getGuild($this->log->guild, $this->log->realm, $this->log->region);
+	}
+	
+	
+	private function getGuilds()
+	{
+		$sql_ary = array(
+			'deleted' => 0,
+		);
+
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.epgp_guilds') . "
+			WHERE 
+				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
+			";
+		$result = $this->db->sql_query($sql);
+
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		if( count($row) > 0 ) return $row;
+		
+		return false;
 	}
 	
 	

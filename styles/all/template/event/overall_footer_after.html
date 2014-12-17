@@ -19,7 +19,7 @@
 				selected: 1
 			},
 			title: {
-				text: 'EPGP Character {CHARNAME}'
+				text: '{L_EPGP_CHARACTER} {CHARNAME}'
 			},
 			legend: {
 				enabled: true
@@ -43,19 +43,19 @@
 			[
 				<!-- IF .n_standings -->
 				{
-					name: 'EP',
+					name: '{L_EP}',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.EP}],<!-- END n_standings -->],
 					marker: { enabled: true },
 					color: 'green',
 				},
 				{
-					name: 'GP',
+					name: '{L_GP}',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.GP}],<!-- END n_standings -->],
 					marker: { enabled: true },
 					color: 'red',
 				},
 				{
-					name: 'PR',
+					name: '{L_PR}',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.PR}],<!-- END n_standings -->],
 					marker: { enabled: true },
 					color: 'yellow',
