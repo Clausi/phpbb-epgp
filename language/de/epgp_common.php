@@ -19,7 +19,7 @@ $lang = array_merge($lang, array(
 	'EPGP_INVALID_SNAPSHOT' => 'Ungültige Snapshot ID',
 	
 	'NAME' => 'Name',
-	'LATEST_ITEMS' => 'Neuest Gegenstände',
+	'LATEST_ITEMS' => 'Neueste Gegenstände',
 	'AS_FROM' => 'Stand',
 	'LATEST_SNAPSHOTS' => 'Neueste Snapshots',
 	
