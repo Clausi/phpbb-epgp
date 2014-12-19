@@ -110,7 +110,7 @@ class main_controller implements main_interface
 				'EP_CHANGE' => ($ep_change != 0) ? $ep_change : '',
 				'GP' => $standing['gp'],
 				'GP_CHANGE' => ($gp_change != 0) ? $gp_change : '',
-				'PR' => ($standing['gp'] > 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
+				'PR' => $this->calcPR($standing['ep'], $standing['gp']),
 			));
 			
 			$i++;
@@ -253,7 +253,7 @@ class main_controller implements main_interface
 				'EP_CHANGE' => ($ep_change != 0) ? $ep_change : '',
 				'GP' => $standing['gp'],
 				'GP_CHANGE' => ($gp_change != 0) ? $gp_change : '',
-				'PR' => ($standing['gp'] != 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
+				'PR' => $this->calcPR($standing['ep'], $standing['gp']),
 			));
 			
 			$i++;
@@ -338,7 +338,7 @@ class main_controller implements main_interface
 					'TIMESTAMP' => $snapshot['snapshot_time']*1000,
 					'EP' => $standing['ep'],
 					'GP' => $standing['gp'],
-					'PR' => ($standing['gp'] != 0) ? number_format(round($standing['ep'] / $standing['gp'], 3), 3) : 0,
+					'PR' => $this->calcPR($standing['ep'], $standing['gp']),
 				));
 			}
 		}
@@ -379,6 +379,13 @@ class main_controller implements main_interface
 		$this->u_action = $this->helper->route('clausi_epgp_controller_character');
 		
 		return $this->helper->render('epgp_character.html', $this->user->lang['EPGP_PAGE']);
+	}
+	
+	
+	private function calcPR($ep, $gp)
+	{
+		if( $gp != 0 ) return number_format(round($ep / $gp, 4), 4);
+		else return 0;
 	}
 	
 	
