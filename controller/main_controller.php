@@ -266,16 +266,7 @@ class main_controller implements main_interface
 		
 		foreach($items as $item)
 		{
-			$itemstring = explode(':', $item['itemstring']);
-			$bonus = '';
-			if($itemstring[12] > 0)
-			{
-				for($i = 13; $i < 13+$itemstring[12]; $i++)
-				{
-					if($i > 13) $bonus .= ':';
-					$bonus .= $itemstring[$i];
-				}
-			}
+			$bonus = $this->getBonusString($item['itemstring']);
 						
 			$this->template->assign_block_vars('epgp_items', array(
 				'GAME_ID' => $item['game_id'],
@@ -347,16 +338,7 @@ class main_controller implements main_interface
 		
 		foreach($items as $item)
 		{
-			$itemstring = explode(':', $item['itemstring']);
-			$bonus = '';
-			if($itemstring[12] > 0)
-			{
-				for($i = 13; $i < 13+$itemstring[12]; $i++)
-				{
-					if($i > 13) $bonus .= ':';
-					$bonus .= $itemstring[$i];
-				}
-			}
+			$bonus = $this->getBonusString($item['itemstring']);
 						
 			$this->template->assign_block_vars('epgp_items', array(
 				'GAME_ID' => $item['game_id'],
@@ -377,6 +359,23 @@ class main_controller implements main_interface
 		$this->u_action = $this->helper->route('clausi_epgp_controller_character');
 		
 		return $this->helper->render('epgp_character.html', $this->user->lang['EPGP_PAGE']);
+	}
+	
+	
+	private function getBonusString($itemstring)
+	{
+		$itemstring = explode(':', $itemstring);
+		$bonus = '';
+		if($itemstring[12] > 0)
+		{
+			for($i = 13; $i < 13+$itemstring[12]; $i++)
+			{
+				if($i > 13) $bonus .= ':';
+				$bonus .= $itemstring[$i];
+			}
+		}
+		
+		return $bonus;
 	}
 	
 	
