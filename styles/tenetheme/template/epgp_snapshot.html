@@ -32,7 +32,7 @@
 		<h3>{L_LATEST_SNAPSHOTS}</h3>
 		<div class="list-group">
 			<!-- BEGIN n_snapshots -->
-			<a href="{n_snapshots.U_SNAPSHOT}" class="list-group-item<!-- IF n_snapshots.CURRENT --> active<!-- ENDIF -->">{n_snapshots.DATE}</a>
+			<a href="{n_snapshots.U_SNAPSHOT}" class="list-group-item<!-- IF n_snapshots.ID == SNAP_ID --> active<!-- ENDIF -->">{n_snapshots.DATE}</a>
 			<!-- END n_snapshots -->
 		</div>
 	</div>

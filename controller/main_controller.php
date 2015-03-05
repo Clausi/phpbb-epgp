@@ -71,6 +71,7 @@ class main_controller implements main_interface
 		
 		$current_snapshot = $this->getSnapshotById($current_snap_id);
 		$this->template->assign_vars(array(
+			'SNAP_ID' => $current_snap_id,
 			'DECAY' => $this->guild['decay_p'],
 			'BASE_GP' => $this->guild['base_gp'],
 			'MIN_EP' => $this->guild['min_ep'],
@@ -158,23 +159,20 @@ class main_controller implements main_interface
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			ORDER BY snapshot_time DESC
 			";
-		$result = $this->db->sql_query_limit($sql, 7);
+		$result = $this->db->sql_query_limit($sql, 10);
 
-		$latest = true;
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('n_snapshots', array(
 				'ID' => $row['snap_id'],
-				'LATEST' => $latest,
 				'DATE' => $this->user->format_date($row['snapshot_time']),
 				'U_SNAPSHOT' => $this->helper->route('clausi_epgp_controller_snapshot', array('snap_id' => $row['snap_id'])),
 			));
-			if($latest === true) $latest = false;
 		}
 		$this->db->sql_freeresult($result);
 		
 		$this->u_action = $this->helper->route('clausi_epgp_controller');
-		return $this->helper->render('epgp_index.html', $this->user->lang['EPGP_PAGE']);
+		return $this->helper->render('epgp_snapshot.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
 	
@@ -192,6 +190,7 @@ class main_controller implements main_interface
 		$current_snapshot = $this->getSnapshotById($snap_id);
 		
 		$this->template->assign_vars(array(
+			'SNAP_ID' => $snap_id,
 			'DECAY' => $this->guild['decay_p'],
 			'BASE_GP' => $this->guild['base_gp'],
 			'MIN_EP' => $this->guild['min_ep'],
@@ -297,13 +296,12 @@ class main_controller implements main_interface
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			ORDER BY snapshot_time DESC
 			";
-		$result = $this->db->sql_query_limit($sql, 7);
+		$result = $this->db->sql_query_limit($sql, 10);
 
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('n_snapshots', array(
 				'ID' => $row['snap_id'],
-				'CURRENT' => ($row['snap_id'] == $snap_id) ? true : false,
 				'DATE' => $this->user->format_date($row['snapshot_time']),
 				'U_SNAPSHOT' => $this->helper->route('clausi_epgp_controller_snapshot', array('snap_id' => $row['snap_id'])),
 			));
