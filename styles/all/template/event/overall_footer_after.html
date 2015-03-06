@@ -34,21 +34,41 @@
 			legend: {
 				enabled: true
 			},
-			yAxis: {
+			yAxis: [{
 				min: 0,
+				title: {
+					text: '<span style="color: green">EP</span> & <span style="color: red">GP</span>',
+				},
 				plotLines: [{
-                value: {MIN_EP},
-                width: 1,
-                color: 'green',
-                dashStyle: 'dash',
-                label: {
-                    text: 'Min EP',
-                    align: 'right',
-                    y: 12,
-                    x: 0
-                }
-            }]
+					value: {MIN_EP},
+					width: 1,
+					color: 'green',
+					dashStyle: 'dash',
+					label: {
+						text: '<span style="color: green">Min EP</span>',
+						align: 'right',
+						y: 12,
+						x: 0
+					}
+				}],
+				opposite: true,
 			},
+			{
+				min: 0,
+                title: {
+					text: 'PR',
+					style: {
+						color: 'yellow'
+					}
+				},
+				labels: {
+					style: {
+						color: 'yellow'
+					}
+				},
+				opposite: false,
+			}],
+			
 			series: 
 			[
 				<!-- IF .n_standings -->
@@ -57,18 +77,21 @@
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.EP}],<!-- END n_standings -->],
 					marker: { enabled: true },
 					color: 'green',
+					yAxis: 0,
 				},
 				{
 					name: '{L_GP}',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.GP}],<!-- END n_standings -->],
 					marker: { enabled: true },
 					color: 'red',
+					yAxis: 0,
 				},
 				{
 					name: '{L_PR}',
 					data: [<!-- BEGIN n_standings -->[{n_standings.TIMESTAMP}, {n_standings.PR}],<!-- END n_standings -->],
 					marker: { enabled: true },
 					color: 'yellow',
+					yAxis: 1,
 				}
 				<!-- ENDIF -->
 			]
