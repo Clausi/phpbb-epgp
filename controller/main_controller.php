@@ -189,6 +189,12 @@ class main_controller implements main_interface
 		// Standings
 		$current_snapshot = $this->getSnapshotById($snap_id);
 		
+		if( ! $current_snapshot )
+		{
+			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INVALID_SNAPSHOT']);
+			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
+		}
+		
 		$this->template->assign_vars(array(
 			'SNAP_ID' => $snap_id,
 			'DECAY' => $this->guild['decay_p'],
