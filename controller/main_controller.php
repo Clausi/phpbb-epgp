@@ -564,7 +564,7 @@ class main_controller implements main_interface
 				$this->container->getParameter('tables.clausi.epgp_characters') => 'c',
 			),
 			'WHERE' => 's.snap_id = '.$snap_id.' AND s.deleted = 0 AND c.char_id = s.char_id AND s.ep < '.$this->guild['min_ep'].'',
-			'ORDER_BY' => 's.ep / s.gp DESC, c.name ASC',
+			'ORDER_BY' => 's.ep / s.gp DESC, s.ep DESC, s.gp ASC, c.name ASC',
 		);
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary_below_minep);
 		$result = $this->db->sql_query($sql);
