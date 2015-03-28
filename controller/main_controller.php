@@ -8,22 +8,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class main_controller implements main_interface
 {
-	/* @var \phpbb\config\config */
 	protected $config;
 
-	/* @var \phpbb\controller\helper */
 	protected $helper;
 
-	/* @var \phpbb\template\template */
 	protected $template;
 
-	/* @var \phpbb\user */
 	protected $user;
 	protected $auth;
 	protected $cp;
 	protected $container;
 	
-	/* @var \phpbb\db\driver\driver_interface */
 	protected $db;
 	protected $u_action;
 	
