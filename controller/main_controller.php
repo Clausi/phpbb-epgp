@@ -28,7 +28,13 @@ class main_controller implements main_interface
 	protected $u_action;
 	
 	protected $guild;
-
+	
+	protected $snapshotsTable;
+	protected $guildsTable;
+	protected $charactersTable;
+	protected $standingsTable;
+	protected $itemsTable;
+	
 
 	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
 	{
@@ -40,6 +46,12 @@ class main_controller implements main_interface
 		$this->db = $db;
 		$this->request = $request;
 		$this->container = $container;
+		
+		$this->snapshotsTable = $this->container->getParameter('tables.clausi.epgp_snapshots');
+		$this->guildsTable = $this->container->getParameter('tables.clausi.epgp_guilds');
+		$this->charactersTable = $this->container->getParameter('tables.clausi.epgp_characters');
+		$this->standingsTable = $this->container->getParameter('tables.clausi.epgp_standings');
+		$this->itemsTable = $this->container->getParameter('tables.clausi.epgp_items');
 	}
 
 	
@@ -50,7 +62,7 @@ class main_controller implements main_interface
 		$sql_ary = array(
 			'SELECT' => 'snap_id, guild_id, snapshot_time, note',
 			'FROM' => array(
-				$this->container->getParameter('tables.clausi.epgp_snapshots') => 's',
+				$this->snapshotsTable => 's',
 			),
 			'WHERE' => 's.guild_id = '.$this->guild['guild_id'].' AND s.deleted = 0',
 			'ORDER_BY' => 's.snapshot_time DESC',
@@ -154,7 +166,7 @@ class main_controller implements main_interface
 			'deleted' => 0,
 		);
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			" . $this->snapshotsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			ORDER BY snapshot_time DESC
@@ -208,7 +220,7 @@ class main_controller implements main_interface
 		$sql_ary = array(
 			'SELECT' => 'snap_id',
 			'FROM' => array(
-				$this->container->getParameter('tables.clausi.epgp_snapshots') => 's',
+				$this->snapshotsTable => 's',
 			),
 			'WHERE' => 's.snapshot_time < ' . $current_snapshot['snapshot_time'] . ' AND s.deleted = 0',
 			'ORDER_BY' => 'snapshot_time DESC',
@@ -294,7 +306,7 @@ class main_controller implements main_interface
 			'deleted' => 0,
 		);
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			" . $this->snapshotsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			ORDER BY snapshot_time DESC
@@ -408,7 +420,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_guilds') . "
+			" . $this->guildsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -431,7 +443,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_guilds') . "
+			" . $this->guildsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -455,7 +467,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_characters') . "
+			" . $this->charactersTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -478,7 +490,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_characters') . "
+			" . $this->charactersTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -502,7 +514,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			" . $this->snapshotsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -524,7 +536,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			" . $this->snapshotsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -545,8 +557,8 @@ class main_controller implements main_interface
 		$sql_ary_above_minep = array(
 			'SELECT' => '*',
 			'FROM' => array(
-				$this->container->getParameter('tables.clausi.epgp_standings') => 's',
-				$this->container->getParameter('tables.clausi.epgp_characters') => 'c',
+				$this->standingsTable => 's',
+				$this->charactersTable => 'c',
 			),
 			'WHERE' => 's.snap_id = '.$snap_id.' AND s.deleted = 0 AND c.char_id = s.char_id AND s.ep >= '.$this->guild['min_ep'].'',
 			'ORDER_BY' => 's.ep / s.gp DESC, c.name ASC',
@@ -560,8 +572,8 @@ class main_controller implements main_interface
 		$sql_ary_below_minep = array(
 			'SELECT' => '*',
 			'FROM' => array(
-				$this->container->getParameter('tables.clausi.epgp_standings') => 's',
-				$this->container->getParameter('tables.clausi.epgp_characters') => 'c',
+				$this->standingsTable => 's',
+				$this->charactersTable => 'c',
 			),
 			'WHERE' => 's.snap_id = '.$snap_id.' AND s.deleted = 0 AND c.char_id = s.char_id AND s.ep < '.$this->guild['min_ep'].'',
 			'ORDER_BY' => 's.ep / s.gp DESC, s.ep DESC, s.gp ASC, c.name ASC',
@@ -586,7 +598,7 @@ class main_controller implements main_interface
 			'deleted' => 0,
 		);
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_standings') . "
+			" . $this->standingsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . " 
 			ORDER BY created ASC
@@ -610,7 +622,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_items') . "
+			" . $this->itemsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . " 
 			ORDER BY looted DESC
@@ -634,7 +646,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_items') . "
+			" . $this->itemsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . " 
 			ORDER BY looted DESC
@@ -660,7 +672,7 @@ class main_controller implements main_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_items') . "
+			" . $this->itemsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";

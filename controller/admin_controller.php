@@ -27,6 +27,13 @@ class admin_controller implements admin_interface
 	protected $log;
 	protected $snap_id;
 	protected $snapshot;
+	
+	
+	protected $snapshotsTable;
+	protected $guildsTable;
+	protected $charactersTable;
+	protected $standingsTable;
+	protected $itemsTable;
 
 	/**
 	* Constructor
@@ -46,6 +53,12 @@ class admin_controller implements admin_interface
 		$this->auth = $auth;
 		$this->container = $container;
 		$this->epgp = $epgp;
+		
+		$this->snapshotsTable = $this->container->getParameter('tables.clausi.epgp_snapshots');
+		$this->guildsTable = $this->container->getParameter('tables.clausi.epgp_guilds');
+		$this->charactersTable = $this->container->getParameter('tables.clausi.epgp_characters');
+		$this->standingsTable = $this->container->getParameter('tables.clausi.epgp_standings');
+		$this->itemsTable = $this->container->getParameter('tables.clausi.epgp_items');
 	}
 	
 	public function display_options()
@@ -162,7 +175,7 @@ class admin_controller implements admin_interface
 			'deleted' => 0,
 		);
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_snapshots') . "
+			" . $this->snapshotsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			ORDER BY snapshot_time DESC
@@ -207,7 +220,7 @@ class admin_controller implements admin_interface
 			'created' => time(),
 			'modified' => time()
 		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_guilds') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->guildsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
 		$this->guild = $this->epgp->getGuild($this->log->guild, $this->log->realm, $this->log->region);
@@ -223,7 +236,7 @@ class admin_controller implements admin_interface
 			'decay_p' => $this->log->decay_p,
 			'modified' => time()
 		);
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_guilds') . ' SET 
+		$sql = 'UPDATE ' . $this->guildsTable . ' SET 
 			' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE guild_id = ' . $this->guild['guild_id'];
 		$this->db->sql_query($sql);
@@ -239,7 +252,7 @@ class admin_controller implements admin_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_guilds') . "
+			" . $this->guildsTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
@@ -265,7 +278,7 @@ class admin_controller implements admin_interface
 			'modified' => time()
 		);
 
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_snapshots') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->snapshotsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
 		$this->snap_id = $this->db->sql_nextid();
@@ -279,13 +292,13 @@ class admin_controller implements admin_interface
 		$sql_ary = array(
 			'deleted' => time(),
 		);
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_snapshots') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
+		$sql = 'UPDATE ' . $this->snapshotsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
 		$this->db->sql_query($sql);
 		
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_standings') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
+		$sql = 'UPDATE ' . $this->standingsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
 		$this->db->sql_query($sql);
 		
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.epgp_items') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
+		$sql = 'UPDATE ' . $this->itemsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE snap_id = ' . $snap_id;
 		$this->db->sql_query($sql);
 	}
 	
@@ -312,7 +325,7 @@ class admin_controller implements admin_interface
 				'modified' => time()
 			);
 
-			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_standings') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+			$sql = 'INSERT INTO ' . $this->standingsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			$this->db->sql_query($sql);
 		}
 	}
@@ -346,7 +359,7 @@ class admin_controller implements admin_interface
 					'modified' => time()
 				);
 
-				$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_items') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+				$sql = 'INSERT INTO ' . $this->itemsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 				$this->db->sql_query($sql);
 			}
 		}
@@ -363,7 +376,7 @@ class admin_controller implements admin_interface
 			'created' => time(),
 			'modified' => time()
 		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.epgp_characters') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->charactersTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
 		return $this->epgp->getCharacter($name, $realm, $region);
@@ -377,7 +390,7 @@ class admin_controller implements admin_interface
 		);
 		
 		$sql = "UPDATE 
-			" . $this->container->getParameter('tables.clausi.epgp_characters') . " 
+			" . $this->charactersTable . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . "
 			WHERE char_id = " . $char_id . "";
 		$result = $this->db->sql_query($sql);
@@ -393,7 +406,7 @@ class admin_controller implements admin_interface
 		);
 
 		$sql = "UPDATE 
-			" . $this->container->getParameter('tables.clausi.epgp_characters') . " 
+			" . $this->charactersTable . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . "
 			WHERE char_id = " . $char_id . "";
 		$result = $this->db->sql_query($sql);
@@ -410,7 +423,7 @@ class admin_controller implements admin_interface
 		);
 
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.epgp_characters') . "
+			" . $this->charactersTable . "
 			WHERE 
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
