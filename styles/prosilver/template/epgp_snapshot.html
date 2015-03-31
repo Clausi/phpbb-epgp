@@ -24,8 +24,8 @@
 					<tr class="bg1">
 						<td>{epgp_standings.NO}</td>
 						<td><a href="{epgp_standings.U_CHAR}">{epgp_standings.NAME}</a></td>
-						<td>{epgp_standings.EP} <em><small class="<!-- IF epgp_standings.EP_CHANGE > 0 -->text-positive<!-- ELSEIF epgp_standings.EP_CHANGE < 0 -->text-negative<!-- ENDIF -->"><!-- IF epgp_standings.EP_CHANGE > 0 -->+<!-- ENDIF -->{epgp_standings.EP_CHANGE}</small></em></td>
-						<td>{epgp_standings.GP} <em><small class="<!-- IF epgp_standings.GP_CHANGE > 0 -->text-negative<!-- ELSEIF epgp_standings.GP_CHANGE < 0 -->text-positive<!-- ENDIF -->"><!-- IF epgp_standings.GP_CHANGE > 0 -->+<!-- ENDIF -->{epgp_standings.GP_CHANGE}</small></em></td>
+						<td>{epgp_standings.EP} <em><span class="small<!-- IF epgp_standings.EP_CHANGE > 0 --> text-positive<!-- ELSEIF epgp_standings.EP_CHANGE < 0 --> text-negative<!-- ENDIF -->"><!-- IF epgp_standings.EP_CHANGE > 0 -->+<!-- ENDIF -->{epgp_standings.EP_CHANGE}</span></em></td>
+						<td>{epgp_standings.GP} <em><span class="small<!-- IF epgp_standings.GP_CHANGE > 0 --> text-negative<!-- ELSEIF epgp_standings.GP_CHANGE < 0 --> text-positive<!-- ENDIF -->"><!-- IF epgp_standings.GP_CHANGE > 0 -->+<!-- ENDIF -->{epgp_standings.GP_CHANGE}</span></em></td>
 						<td><strong>{epgp_standings.PR}</strong></td>
 					</tr>
 				<!-- END epgp_standings -->
