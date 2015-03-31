@@ -9,3 +9,7 @@
 .ep, .gp, .pr {
 	width: 10%;
 }
+
+ul.item-list, ul.snapshot-list {
+	margin-left: 20px;
+}

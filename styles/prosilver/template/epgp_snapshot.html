@@ -37,7 +37,7 @@
 
 <div class="stat-block">
 	<h3>{L_LATEST_SNAPSHOTS}</h3>
-	<ul style="list-style-type: none;">
+	<ul class="snapshot-list">
 		<!-- BEGIN n_snapshots -->
 		<li><a href="{n_snapshots.U_SNAPSHOT}" class="list-group-item<!-- IF n_snapshots.ID == SNAP_ID --> active<!-- ENDIF -->">{n_snapshots.DATE}</a></li>
 		<!-- END n_snapshots -->
@@ -47,9 +47,9 @@
 <!-- IF .epgp_items -->
 <div class="stat-block">
 	<h3>{L_LATEST_ITEMS}</h3>
-	<ul>
+	<ul class="item-list">
 		<!-- BEGIN epgp_items -->
-		<li><a href="http://www.wowhead.com/?item={epgp_items.GAME_ID}" rel="bonus={epgp_items.ITEM_BONUS}">{epgp_items.GAME_ID}</a><small> / {epgp_items.LOOTER} / {epgp_items.ITEM_GP} GP / {epgp_items.LOOTED}</small></li>
+		<li><a href="http://www.wowhead.com/?item={epgp_items.GAME_ID}" rel="bonus={epgp_items.ITEM_BONUS}">{epgp_items.GAME_ID}</a><span class="small"> / {epgp_items.LOOTER} / {epgp_items.ITEM_GP} GP / {epgp_items.LOOTED}</span></li>
 		<!-- END epgp_items -->
 	</ul>
 </div>
