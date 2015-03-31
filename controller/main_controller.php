@@ -85,12 +85,14 @@ class main_controller implements main_interface
 			'EXTRAS' => $this->guild['extras_p'],
 			'SNAPSHOT_DATE' => date('d.m.Y, H:i', $current_snapshot['snapshot_time']),
 			'EPGP_PAGE' => true,
+			'BELOW_MINEP' => sprintf($this->user->lang['BELOW_MINEP'], $this->guild['min_ep']),
 		));
-		
+				
 		$current_standings = $this->getStandings($current_snap_id);
 		$current_items = $this->getItems($current_snap_id);
 		
 		$i = 1;
+		$below_minep = 0;
 		foreach($current_standings as $standing)
 		{
 			if($previous_snap_id != false)
@@ -109,6 +111,8 @@ class main_controller implements main_interface
 				$ep_change = '';
 				$gp_change = '';
 			}
+			
+			if($standing['ep'] < $this->guild['min_ep']) $below_minep++;
 		
 			$this->template->assign_block_vars('epgp_standings', array(
 				'NO' => $i,
@@ -119,6 +123,7 @@ class main_controller implements main_interface
 				'GP' => $standing['gp'],
 				'GP_CHANGE' => ($gp_change != 0) ? $gp_change : '',
 				'PR' => $this->calcPR($standing['ep'], $standing['gp']),
+				'BELOW_MINEP' => ($below_minep == 1) ? true : false,
 			));
 			
 			$i++;

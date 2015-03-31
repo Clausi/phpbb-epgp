@@ -32,6 +32,7 @@ $lang = array_merge($lang, array(
 	'EP' => 'EP',
 	'GP' => 'GP',
 	'PR' => 'PR',
+	'BELOW_MINEP' => 'Unter %s Min EP',
 	'EPGP_CHARACTER' => 'EPGP Charakter',
 	'EPGP_BACK' => 'Zurück zur Übersicht',
 ));
