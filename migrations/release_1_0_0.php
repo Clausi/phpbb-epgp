@@ -6,14 +6,13 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 {
 	static public function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v310\rc5');
+		return array('\phpbb\db\migration\data\v31x\v313');
 	}
 
 	public function update_data()
 	{
 		return array(
 			array('config.add', array('clausi_epgp_active', 0)),
-			array('config.add', array('clausi_epgp_bnetkey', '')),
 			array('config.add', array('clausi_epgp_guild', 1)),
 
 			array('module.add', array(

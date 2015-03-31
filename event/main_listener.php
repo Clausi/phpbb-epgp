@@ -21,11 +21,8 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	protected $helper;
-
 	protected $template;
-	
 	protected $config;
-	
 	protected $auth;
 
 
