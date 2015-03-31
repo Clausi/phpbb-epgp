@@ -5,3 +5,7 @@
 .text-negative {
 	color: red;
 }
+
+.ep, .gp, .pr {
+	width: 10%;
+}
