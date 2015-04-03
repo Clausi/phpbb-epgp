@@ -9,16 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 class main_controller implements main_interface
 {
 	protected $config;
-
 	protected $helper;
-
 	protected $template;
-
 	protected $user;
 	protected $auth;
 	protected $cp;
 	protected $container;
-	
 	protected $db;
 	protected $u_action;
 	

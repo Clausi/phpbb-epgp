@@ -413,8 +413,7 @@ class admin_controller implements admin_interface
 				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
 			";
 		$result = $this->db->sql_query($sql);
-		$this->db->sql_freeresult($result);
-
+		
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$found = false;
@@ -438,6 +437,7 @@ class admin_controller implements admin_interface
 			
 			if( $found == false ) $this->deactivateCharacter($char_id);
 		}
+		$this->db->sql_freeresult($result);
 	}
 
 	
