@@ -1,11 +1,11 @@
 clausi_epgp_controller:
     path: /epgp/index
-    defaults: { _controller: clausi.epgp.main.controller:index }
+    defaults: { _controller: clausi.epgp.main.controller:snapshot, snap_id: 0 }
 
 clausi_epgp_controller_snapshot:
     path: /epgp/snapshot/{snap_id}
-    defaults: { _controller: clausi.epgp.main.controller:snapshot, snap_id: "0" }
+    defaults: { _controller: clausi.epgp.main.controller:snapshot, snap_id: 0 }
 
 clausi_epgp_controller_character:
     path: /epgp/character/{char_id}
-    defaults: { _controller: clausi.epgp.main.controller:character, char_id: "0" }
+    defaults: { _controller: clausi.epgp.main.controller:character, char_id: 0 }

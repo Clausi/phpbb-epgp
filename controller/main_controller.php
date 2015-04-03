@@ -43,157 +43,21 @@ class main_controller implements main_interface
 		$this->charactersTable = $this->container->getParameter('tables.clausi.epgp_characters');
 		$this->standingsTable = $this->container->getParameter('tables.clausi.epgp_standings');
 		$this->itemsTable = $this->container->getParameter('tables.clausi.epgp_items');
-	}
-
-	
-	public function index()
-	{
+		
 		$this->guild = $this->getGuildById($this->config['clausi_epgp_guild']);
-		
-		$sql_ary = array(
-			'SELECT' => 'snap_id, guild_id, snapshot_time, note',
-			'FROM' => array(
-				$this->snapshotsTable => 's',
-			),
-			'WHERE' => 's.guild_id = '.$this->guild['guild_id'].' AND s.deleted = 0',
-			'ORDER_BY' => 's.snapshot_time DESC',
-		);
-		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query_limit($sql, 2);
-		
-		$row = $this->db->sql_fetchrowset($result);
-		$this->db->sql_freeresult($result);
-
-		$current_snap_id = $row[0]['snap_id'];
-		if( ! empty($row[1])) {
-			$previous_snap_id = $row[1]['snap_id'];
-			$previous_standings = $this->getStandings($previous_snap_id);
-			$previous_items = $this->getItems($previous_snap_id);
-		}
-		else $previous_snap_id = false;
-		
-		$current_snapshot = $this->getSnapshotById($current_snap_id);
-		$this->template->assign_vars(array(
-			'SNAP_ID' => $current_snap_id,
-			'DECAY' => $this->guild['decay_p'],
-			'BASE_GP' => $this->guild['base_gp'],
-			'MIN_EP' => $this->guild['min_ep'],
-			'EXTRAS' => $this->guild['extras_p'],
-			'SNAPSHOT_DATE' => date('d.m.Y, H:i', $current_snapshot['snapshot_time']),
-			'EPGP_PAGE' => true,
-			'BELOW_MINEP' => sprintf($this->user->lang['BELOW_MINEP'], $this->guild['min_ep']),
-		));
-				
-		$current_standings = $this->getStandings($current_snap_id);
-		$current_items = $this->getItems($current_snap_id);
-		
-		$i = 1;
-		$below_minep = 0;
-		foreach($current_standings as $standing)
-		{
-			if($previous_snap_id != false)
-			{
-				foreach($previous_standings as $previous)
-				{
-					if($standing['char_id'] == $previous['char_id'])
-					{
-						$ep_change = $standing['ep'] - $previous['ep'];
-						$gp_change = $standing['gp'] - $previous['gp'];
-					}
-				}
-			}
-			else 
-			{
-				$ep_change = '';
-				$gp_change = '';
-			}
-			
-			if($standing['ep'] < $this->guild['min_ep']) $below_minep++;
-		
-			$this->template->assign_block_vars('epgp_standings', array(
-				'NO' => $i,
-				'NAME' => $this->getCharacterById($standing['char_id'])['name'],
-				'U_CHAR' => $this->helper->route('clausi_epgp_controller_character', array('char_id' => $standing['char_id'])),
-				'EP' => $standing['ep'],
-				'EP_CHANGE' => ($ep_change != 0) ? $ep_change : '',
-				'GP' => $standing['gp'],
-				'GP_CHANGE' => ($gp_change != 0) ? $gp_change : '',
-				'PR' => $this->calcPR($standing['ep'], $standing['gp']),
-				'BELOW_MINEP' => ($below_minep == 1) ? true : false,
-			));
-			
-			$i++;
-		}
-		
-		if(is_array($current_items))
-		{
-			$items = $current_items;
-		}
-		elseif(is_array($previous_items))
-		{
-			$items = $previous_items;
-		}
-		else $items = array();
-		
-		foreach($items as $item)
-		{
-			$itemstring = explode(':', $item['itemstring']);
-			$bonus = '';
-			if($itemstring[12] > 0)
-			{
-				for($i = 13; $i < 13+$itemstring[12]; $i++)
-				{
-					if($i > 13) $bonus .= ':';
-					$bonus .= $itemstring[$i];
-				}
-			}
-			
-			$this->template->assign_block_vars('epgp_items', array(
-				'GAME_ID' => $item['game_id'],
-				'ITEM_BONUS' => $bonus,
-				'ITEM_GP' => $item['gp'],
-				'LOOTED' => $this->user->format_date($item['looted']),
-				'LOOTER' => $this->getCharacterById($item['char_id'])['name'],
-			));
-		}
-		
-		// Snapshots
-		$sql_ary = array(
-			'deleted' => 0,
-		);
-		$sql = "SELECT * FROM 
-			" . $this->snapshotsTable . "
-			WHERE 
-				" . $this->db->sql_build_array('SELECT', $sql_ary) . "
-			ORDER BY snapshot_time DESC
-			";
-		$result = $this->db->sql_query_limit($sql, 10);
-
-		while($row = $this->db->sql_fetchrow($result))
-		{
-			$this->template->assign_block_vars('n_snapshots', array(
-				'ID' => $row['snap_id'],
-				'DATE' => $this->user->format_date($row['snapshot_time']),
-				'U_SNAPSHOT' => $this->helper->route('clausi_epgp_controller_snapshot', array('snap_id' => $row['snap_id'])),
-			));
-		}
-		$this->db->sql_freeresult($result);
-		
-		$this->u_action = $this->helper->route('clausi_epgp_controller');
-		return $this->helper->render('epgp_snapshot.html', $this->user->lang['EPGP_PAGE']);
 	}
 	
 	
-	public function snapshot($snap_id)
+	public function snapshot($snap_id = 0)
 	{
-		if( ! is_numeric($snap_id) || $snap_id <= 0 )
+		if( ! is_numeric($snap_id) || $snap_id < 0 )
 		{
 			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INVALID_SNAPSHOT']);
 			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
 		}
 		
-		$this->guild = $this->getGuildById($this->config['clausi_epgp_guild']);
-		
+		if($snap_id === 0) $snap_id = $this->getCurrentSnapId();
+
 		// Standings
 		$current_snapshot = $this->getSnapshotById($snap_id);
 		
@@ -336,9 +200,7 @@ class main_controller implements main_interface
 			$this->template->assign_var('EPGP_MESSAGE', $this->user->lang['EPGP_INVALID_CHARACTER']);
 			return $this->helper->render('epgp_error.html', $this->user->lang['EPGP_PAGE'], 404);
 		}
-		
-		$this->guild = $this->getGuildById($this->config['clausi_epgp_guild']);
-		
+				
 		$character = $this->getCharacterById($char_id);
 		$charStandings = $this->getStandingsByCharacterId($char_id);
 		
@@ -549,6 +411,26 @@ class main_controller implements main_interface
 		if( count($row) > 0 ) return $row[0];
 		
 		return false;
+	}
+	
+	
+	private function getCurrentSnapId()
+	{
+		$sql_ary = array(
+			'SELECT' => 'snap_id, guild_id, snapshot_time, note',
+			'FROM' => array(
+				$this->snapshotsTable => 's',
+			),
+			'WHERE' => 's.guild_id = '.$this->guild['guild_id'].' AND s.deleted = 0',
+			'ORDER_BY' => 's.snapshot_time DESC',
+		);
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query_limit($sql, 1);
+		
+		$row = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		return $row[0]['snap_id'];
 	}
 	
 	

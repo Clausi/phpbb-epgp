@@ -6,7 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 interface main_interface
 {
-	public function index();
 	public function snapshot($snap_id);
 	public function character($char_id);
 	public function getGuild($name, $realm, $region);
