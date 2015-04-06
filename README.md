@@ -3,9 +3,11 @@ phpbb-epgp
 
 ## epgp extension for phpbb 3.1
 phpBB is a free, open source bulletin board software, see https://www.phpbb.com/
+
 EPGP is a relational reward system for World of Warcraft, see http://www.epgpweb.com/
 
 phpBB-epgp views your members epgp standings outside of World of Warcraft.
+
 
 ## Installation
 Create a `clausi/epgp` folder in your phpBB-Forum extension folder, e.g. `phpBB/ext/clausi/epgp`
