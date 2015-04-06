@@ -1,7 +1,7 @@
 phpbb-epgp
 ================
 
-# epgp extension for phpbb 3.1
+## epgp extension for phpbb 3.1
 EPGP is a relational reward system for World of Warcraft, see http://www.epgpweb.com/
 
 ## Installation
@@ -12,11 +12,12 @@ Go to your phpBB-Forum "administration panel - customize - manage extension". If
 
 ## phpBB permissions
 phpbb-epgp will create permissions to administrate and view the epgp system in your forum. Assign these permissions to your groups or specific users.
-* User permissions can be found on "user-permissions - misc - can use raidplaner"
+* User permissions can be found on "user-permissions - misc - can use epgp"
 * Admin permissions can be found on "administrative permissions - misc - can manage epgp"
+
 Make sure you grant view access for your members and admin access for your epgp-masters.
 
-Templates can also access phpBB template variable {U_EPGP} which will be true if current user has epgp-user privileges.
+Templates can also access phpBB template variable `{U_EPGP}` which will be true if current user has epgp-user privileges.
 
 
 ## epgp modul
