@@ -302,7 +302,6 @@ class main_controller implements main_interface
 	{
 		$sql_ary = array(
 			'guild_id' => $guild_id,
-			'deleted' => 0,
 		);
 
 		$sql = "SELECT * FROM 
@@ -477,7 +476,6 @@ class main_controller implements main_interface
 	{
 		$sql_ary = array(
 			'char_id' => $char_id,
-			'deleted' => 0,
 		);
 		$sql = "SELECT * FROM 
 			" . $this->standingsTable . "
